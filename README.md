@@ -4,6 +4,14 @@
 
 ---
 
+## Procedência
+
+Este repositório continua o Vivlio entregue na N1 pelo Grupo Adriam em [Gusgb4/Vivlio](https://github.com/Gusgb4/Vivlio), recebido pela equipe Horangotandgo no handoff de 17/09/2026. O histórico completo foi migrado (mesmos commits, mesmas tags), e a partir daqui o desenvolvimento acontece neste repositório. O original permanece como referência somente-leitura.
+
+Documentos do handoff em [`Docs/`](Docs/): guia de instalação e pontos de atenção, relatório de débitos técnicos, plano de testes e especificação de requisitos.
+
+---
+
 ## Sobre o Projeto
 
 Bibliotecas e feiras comunitárias frequentemente enfrentam dificuldades para precificar livros usados e controlar o fluxo de trocas. O **Sebo Comunitário** resolve esse problema implementando a equivalência por **créditos de doação**:
@@ -15,6 +23,19 @@ Bibliotecas e feiras comunitárias frequentemente enfrentam dificuldades para pr
 ## Regra de Negócio Crítica (RN Crítica)
 
 > **Regra:** Um usuário só pode solicitar o resgate de um livro se possuir **pelo menos 1 crédito ativo** em sua conta.
+
+---
+
+## Como rodar
+
+```bash
+cp .env.example .env
+docker compose up
+```
+
+Frontend em `http://localhost:5173`, API em `http://localhost:8080`. Não é preciso ter JDK, Maven ou Node instalados — as versões vêm fixadas nas imagens.
+
+Detalhes, variáveis de ambiente, como rodar os testes e o caminho sem Docker em [`Docs/devops/ambiente-local.md`](Docs/devops/ambiente-local.md). Regras de branch, commit e Pull Request em [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
 
@@ -68,12 +89,26 @@ Bibliotecas e feiras comunitárias frequentemente enfrentam dificuldades para pr
 ## 📁 Estrutura do Repositório
 
 ```text
-sebo-comunitario/
+Vivlio/
+├── .github/
+│   ├── workflows/ci.yml      # Pipeline de verificação
+│   ├── CODEOWNERS            # Quem revisa cada área
+│   └── pull_request_template.md
 ├── backend/                  # Aplicação Java Spring Boot
 │   ├── src/main/java/        # Controllers, Services, Repositories, Entities
-│   └── src/main/resources/   # application.properties / application.yml
+│   ├── src/main/resources/   # application.properties
+│   ├── src/test/java/        # Suíte JUnit
+│   └── Dockerfile            # Imagem de desenvolvimento (JDK 17)
 ├── frontend/                 # Aplicação React + Vite
 │   ├── src/components/       # Componentes reutilizáveis
-│   ├── src/pages/            # Telas da aplicação (Login, Acervo, Perfil)
-│   └── src/services/         # Configuração de chamadas de API (Axios)
+│   ├── src/pages/            # Telas da aplicação (Login, Acervo, Doação, Perfil)
+│   ├── src/services/         # Configuração de chamadas de API (Axios)
+│   └── Dockerfile            # Imagem de desenvolvimento (Node 22)
+├── Docs/                     # Requisitos, plano de testes, handoff, débitos técnicos
+│   └── devops/               # Ambiente local e registro de configuração
+├── docker-compose.yml        # Banco + backend + frontend
+├── .env.example              # Variáveis de ambiente
+├── commitlint.config.js      # Convenção de commit
+├── CONTRIBUTING.md           # Branches, commits, Pull Request, CI
 └── README.md
+```
