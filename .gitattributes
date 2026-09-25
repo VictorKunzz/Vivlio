@@ -1,0 +1,29 @@
+# Normalizacao de fim de linha.
+#
+# Sem este arquivo, quem clona no Windows com core.autocrlf=true recebe todo o
+# repositorio em CRLF. Isso quebra duas coisas concretas: o `prettier --check`
+# acusa os 21 arquivos do frontend como fora de formato (ele espera LF), e o
+# `backend/mvnw` copiado para uma imagem Linux falha com "bad interpreter".
+
+* text=auto eol=lf
+
+# Scripts do Windows precisam de CRLF para o interpretador de lote.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Script do Maven Wrapper roda em sh, dentro do container e no runner do CI.
+mvnw text eol=lf
+*.sh text eol=lf
+
+# Binarios: nao converter nada.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.jar binary
+*.zip binary
