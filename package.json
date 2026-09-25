@@ -1,0 +1,12 @@
+{
+  "name": "vivlio-tooling",
+  "private": true,
+  "description": "Ferramentas de verificacao do monorepo. Nao e a aplicacao: o frontend vive em frontend/ e o backend em backend/.",
+  "scripts": {
+    "commitlint": "commitlint"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3"
+  }
+}
