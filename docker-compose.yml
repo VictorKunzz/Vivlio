@@ -1,0 +1,78 @@
+# Ambiente de desenvolvimento do Vivlio (monorepo).
+#
+# `docker compose up` sobe banco, backend e frontend. Nao e preciso ter JDK, Maven
+# ou Node instalados na maquina, e as versoes sao as mesmas para todo mundo.
+#
+# Antes da primeira subida:  cp .env.example .env
+#
+# Este arquivo substitui o backend/docker-compose.yml, que subia apenas o Postgres
+# e vivia dentro de uma das pastas do monorepo.
+
+name: vivlio
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vivlio-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vivlio}
+      POSTGRES_USER: ${POSTGRES_USER:-vivlio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vivlio}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - vivlio-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vivlio} -d ${POSTGRES_DB:-vivlio}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: vivlio-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # O host do banco e o nome do servico, nao localhost. A aplicacao ja le isto
+      # de variavel de ambiente, entao nada no codigo precisou mudar.
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-vivlio}
+      DB_USERNAME: ${POSTGRES_USER:-vivlio}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-vivlio}
+      JPA_DDL_AUTO: ${JPA_DDL_AUTO:-update}
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-false}
+      # Sem valor padrao de proposito: o container se recusa a subir sem segredo
+      # explicito. Mitiga o DT-03 no caminho do Docker sem tocar no codigo.
+      JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no arquivo .env (use .env.example como base)}
+      JWT_EXPIRACAO_MS: ${JWT_EXPIRACAO_MS:-86400000}
+      SERVER_PORT: 8080
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    volumes:
+      # So o fonte e montado: o resto da imagem (dependencias) fica intacto.
+      - ./backend/src:/app/src
+      - maven-cache:/root/.m2
+
+  frontend:
+    build: ./frontend
+    container_name: vivlio-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      # O navegador do host e quem faz a chamada, por isso localhost e nao backend.
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      # node_modules nao e montado de proposito: o do container e que vale.
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+
+volumes:
+  vivlio-pgdata:
+  maven-cache:
