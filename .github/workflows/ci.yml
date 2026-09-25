@@ -1,0 +1,132 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+# O padrao do GitHub e mais amplo do que um CI de verificacao precisa.
+permissions:
+  contents: read
+
+# Push seguido no mesmo PR cancela a execucao anterior em vez de empilhar fila.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  convencoes:
+    name: convencoes
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # commitlint precisa do historico para comparar base..head.
+          fetch-depth: 0
+
+      - name: Valida o nome da branch (Conventional Branch)
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          echo "Branch: $BRANCH"
+          if printf '%s' "$BRANCH" | grep -Eq '^(main|develop)$'; then
+            # Branch tronco: o PR de develop para main tem develop como origem.
+            echo "OK (branch tronco)"
+          elif printf '%s' "$BRANCH" | grep -Eq '^(feature|fix|hotfix|chore)/[a-z0-9]+(-[a-z0-9]+)*$'; then
+            echo "OK"
+          elif printf '%s' "$BRANCH" | grep -Eq '^release/v?[0-9]+(\.[0-9]+)*$'; then
+            echo "OK (release)"
+          else
+            echo "::error::Nome de branch fora do padrao Conventional Branch: '$BRANCH'"
+            echo "Use tipo/descricao-em-kebab-case, com tipo entre: feature, fix, hotfix, chore, release."
+            echo "Exemplos validos: feature/resgate-de-livro, fix/saldo-negativo, release/v1.2.0"
+            echo "Regras da descricao: so a-z, 0-9 e hifen separando palavras; sem maiuscula,"
+            echo "sem underscore, sem hifen duplicado, sem hifen no inicio ou no fim."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: Valida as mensagens de commit (Conventional Commits)
+        run: >-
+          npx commitlint
+          --from ${{ github.event.pull_request.base.sha }}
+          --to ${{ github.event.pull_request.head.sha }}
+          --verbose
+
+      - name: Valida o titulo do Pull Request
+        env:
+          TITULO: ${{ github.event.pull_request.title }}
+        run: printf '%s' "$TITULO" | npx commitlint --verbose
+
+  backend:
+    name: backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          # Fixo em 17: o Lombok que o Spring Boot 3.3.5 resolve nao suporta JDK 23
+          # e falha em silencio. Herdar a versao do runner nao e opcao.
+          java-version: '17'
+          cache: maven
+
+      # Maven vem do wrapper versionado (3.9.9). Nunca `mvn`.
+      - run: ./mvnw -B -ntp verify
+        working-directory: backend
+
+  frontend:
+    name: frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Vite 8 exige Node 20.19+ ou 22.12+.
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+        working-directory: frontend
+
+      - run: npm run lint
+        working-directory: frontend
+
+      # --check, nunca `npm run format`: o script format escreve nos arquivos.
+      - run: npx prettier --check .
+        working-directory: frontend
+
+      - run: npm run build
+        working-directory: frontend
+
+  ci-ok:
+    name: ci-ok
+    runs-on: ubuntu-latest
+    needs: [convencoes, backend, frontend]
+    if: always()
+    steps:
+      - name: Consolida o resultado
+        run: |
+          echo "convencoes: ${{ needs.convencoes.result }}"
+          echo "backend:    ${{ needs.backend.result }}"
+          echo "frontend:   ${{ needs.frontend.result }}"
+          # 'skipped' e aceito: o job convencoes nao roda em push direto.
+          for r in "${{ needs.convencoes.result }}" "${{ needs.backend.result }}" "${{ needs.frontend.result }}"; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "::error::Algum job obrigatorio nao passou."; exit 1 ;;
+            esac
+          done
+          echo "Tudo verde."
