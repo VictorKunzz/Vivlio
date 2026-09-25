@@ -1,0 +1,35 @@
+# Donos de codigo — quem o GitHub convoca automaticamente para revisar.
+#
+# A atribuicao vem do Acordo de Manutenibilidade. Nao e sobre quem escreve, e sobre
+# quem responde pela area: ninguem aprova sozinho mudanca na area de outra pessoa.
+#
+# A ultima regra que casa com o arquivo e a que vale, entao a ordem importa.
+
+# Padrao: qualquer coisa nao listada abaixo passa pelo DevOps.
+*                           @VictorKunzz
+
+# Aplicacao
+/frontend/                  @joaopedroangelico
+/backend/                   @Luis-Fernando-Pereira
+
+# Documentacao de projeto: requisitos, handoff, debitos tecnicos.
+/Docs/                      @VynicyusCandido @gustavotaques
+
+# Plano de testes: QA.
+/Docs/Plano_de_Testes_Sebo_Comunitario.pdf   @MRanderle
+
+# Infraestrutura e governanca do repositorio: DevOps.
+/.github/                   @VictorKunzz
+/Docs/devops/               @VictorKunzz
+/docker-compose.yml         @VictorKunzz
+/backend/Dockerfile         @VictorKunzz
+/backend/.dockerignore      @VictorKunzz
+/frontend/Dockerfile        @VictorKunzz
+/frontend/.dockerignore     @VictorKunzz
+/.gitattributes             @VictorKunzz
+/.gitignore                 @VictorKunzz
+/.env.example               @VictorKunzz
+/commitlint.config.js       @VictorKunzz
+/package.json               @VictorKunzz
+/package-lock.json          @VictorKunzz
+/CONTRIBUTING.md            @VictorKunzz
