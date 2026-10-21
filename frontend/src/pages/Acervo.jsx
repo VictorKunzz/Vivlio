@@ -4,6 +4,7 @@ import api from '../services/api';
 import { mensagemDeErro } from '../services/erros';
 import { useAuth } from '../hooks/useAuth';
 import { GENEROS } from '../constants/generos';
+import Estrelas from '../components/Estrelas';
 
 function Acervo() {
   const { usuario, atualizarSaldo } = useAuth();
@@ -134,6 +135,7 @@ function Acervo() {
               <h2>{livro.titulo}</h2>
               <p className="autor">{livro.autor}</p>
               <span className="chip">{livro.genero}</span>
+              <Estrelas nota={livro.nota} />
               <p className="doador">Doado por {livro.doador}</p>
 
               {usuario ? (

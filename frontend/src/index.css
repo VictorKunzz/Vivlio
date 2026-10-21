@@ -336,3 +336,48 @@ a:hover {
   color: var(--cor-texto-suave);
   font-size: 0.9rem;
 }
+
+.titulo-secao {
+  margin: 0.8rem 0 0;
+  font-size: 1.1rem;
+}
+
+.pergunta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.9rem 1rem;
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+}
+
+.pergunta legend {
+  padding: 0 0.3rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.opcao input {
+  margin-top: 0.2rem;
+  accent-color: var(--cor-destaque);
+}
+
+.estrelas {
+  font-size: 0.95rem;
+  letter-spacing: 0.1rem;
+  color: #c98a12;
+}
+
+.estrelas-vazias {
+  color: var(--cor-borda);
+}

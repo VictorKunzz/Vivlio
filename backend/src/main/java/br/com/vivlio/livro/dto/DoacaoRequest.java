@@ -1,6 +1,9 @@
 package br.com.vivlio.livro.dto;
 
+import br.com.vivlio.avaliacao.dto.AvaliacaoRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record DoacaoRequest(
 
@@ -11,6 +14,10 @@ public record DoacaoRequest(
         String autor,
 
         @NotBlank(message = "O gênero é obrigatório.")
-        String genero
+        String genero,
+
+        @Valid
+        @NotNull(message = "Responda o questionário de estado do livro.")
+        AvaliacaoRequest avaliacao
 ) {
 }

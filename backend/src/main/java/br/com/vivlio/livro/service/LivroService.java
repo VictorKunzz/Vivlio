@@ -1,5 +1,7 @@
 package br.com.vivlio.livro.service;
 
+import br.com.vivlio.avaliacao.entity.AvaliacaoLivro;
+import br.com.vivlio.avaliacao.service.AvaliacaoService;
 import br.com.vivlio.credito.service.CreditoService;
 import br.com.vivlio.livro.dto.DoacaoRequest;
 import br.com.vivlio.livro.dto.DoacaoResponse;
@@ -26,6 +28,7 @@ public class LivroService {
     private final LivroRepository livroRepository;
     private final UsuarioRepository usuarioRepository;
     private final CreditoService creditoService;
+    private final AvaliacaoService avaliacaoService;
 
     @Transactional(readOnly = true)
     public List<LivroResponse> listarDisponiveis(String busca, String genero) {
@@ -40,11 +43,14 @@ public class LivroService {
         Usuario doador = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new NegocioException(HttpStatus.UNAUTHORIZED, "Usuário não encontrado."));
 
+        AvaliacaoLivro avaliacao = avaliacaoService.avaliar(request.avaliacao());
+
         Livro livro = livroRepository.save(new Livro(
                 request.titulo().trim(),
                 request.autor().trim(),
                 request.genero().trim(),
-                doador
+                doador,
+                avaliacao
         ));
 
         creditoService.creditar(doador, DESCRICAO_DOACAO);
