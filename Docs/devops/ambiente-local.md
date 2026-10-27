@@ -59,7 +59,7 @@ Todas têm padrão de desenvolvimento no `.env.example`, com uma exceção delib
 | `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | `vivlio` | Banco de desenvolvimento |
 | `POSTGRES_PORT` | `5432` | Mude se já tiver um Postgres local ocupando a porta |
 | `BACKEND_PORT` | `8080` | Porta publicada no host |
-| `JPA_DDL_AUTO` | `update` | Ver a dívida DT-01 |
+| `JPA_DDL_AUTO` | `validate` | O schema vem das migrações Flyway em `backend/src/main/resources/db/migration`; o Hibernate só confere |
 | `JPA_SHOW_SQL` | `false` | Log de SQL |
 | `JWT_SECRET` | **nenhum** | Sem padrão de propósito: compose e aplicação falham se não for definido. Mínimo de 32 caracteres |
 | `JWT_EXPIRACAO_MS` | `7200000` | 2 horas |
