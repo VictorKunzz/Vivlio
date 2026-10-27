@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { irParaLogin } from './navegacao';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
@@ -18,9 +19,7 @@ api.interceptors.response.use(
     const rotaDeAuth = erro.config?.url?.startsWith('/api/auth');
     if (erro.response?.status === 401 && !rotaDeAuth) {
       localStorage.removeItem('vivlio_token');
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
-      }
+      irParaLogin();
     }
     return Promise.reject(erro);
   }
