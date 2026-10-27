@@ -337,6 +337,49 @@ a:hover {
   font-size: 0.9rem;
 }
 
+.extrato {
+  width: 100%;
+  max-width: 640px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.extrato th,
+.extrato td {
+  padding: 0.55rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.extrato th {
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+.extrato tr:last-child td {
+  border-bottom: none;
+}
+
+.extrato td:last-child,
+.extrato th:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.valor-entrada {
+  color: var(--cor-destaque);
+  font-weight: 600;
+}
+
+.valor-saida {
+  color: var(--cor-erro);
+  font-weight: 600;
+}
+
 .titulo-secao {
   margin: 0.8rem 0 0;
   font-size: 1.1rem;
@@ -380,4 +423,78 @@ a:hover {
 
 .estrelas-vazias {
   color: var(--cor-borda);
+}
+
+.campo input.invalido,
+.campo select.invalido {
+  border-color: var(--cor-erro);
+  background-color: var(--cor-erro-clara);
+}
+
+.mensagem-campo,
+.campo small.mensagem-campo {
+  color: var(--cor-erro);
+  font-size: 0.78rem;
+}
+
+.pergunta.invalida {
+  border-color: var(--cor-erro);
+}
+
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgba(36, 32, 27, 0.45);
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 420px;
+  padding: 1.4rem;
+  background-color: var(--cor-superficie);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.modal h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.modal .autor {
+  margin: 0;
+  color: var(--cor-texto-suave);
+}
+
+.detalhes-livro {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.3rem 1rem;
+  margin: 0.6rem 0 0;
+  font-size: 0.9rem;
+}
+
+.detalhes-livro dt {
+  color: var(--cor-texto-suave);
+}
+
+.detalhes-livro dd {
+  margin: 0;
+}
+
+.modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  width: 100%;
+  margin-top: 0.4rem;
 }
