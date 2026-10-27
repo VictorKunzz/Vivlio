@@ -337,6 +337,49 @@ a:hover {
   font-size: 0.9rem;
 }
 
+.extrato {
+  width: 100%;
+  max-width: 640px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.extrato th,
+.extrato td {
+  padding: 0.55rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.extrato th {
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+.extrato tr:last-child td {
+  border-bottom: none;
+}
+
+.extrato td:last-child,
+.extrato th:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.valor-entrada {
+  color: var(--cor-destaque);
+  font-weight: 600;
+}
+
+.valor-saida {
+  color: var(--cor-erro);
+  font-weight: 600;
+}
+
 .titulo-secao {
   margin: 0.8rem 0 0;
   font-size: 1.1rem;
