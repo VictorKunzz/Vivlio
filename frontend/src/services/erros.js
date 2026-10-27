@@ -16,3 +16,11 @@ export function mensagemDeErro(erro, padrao = PADRAO) {
 
   return dados?.mensagem || padrao;
 }
+
+export const MENSAGEM_CAMPOS_INVALIDOS =
+  'Corrija os campos destacados em vermelho.';
+
+// Mensagens por campo devolvidas pela API em uma resposta 400 ({ campos: { titulo: '...' } }).
+export function errosDosCampos(erro) {
+  return erro?.response?.data?.campos ?? {};
+}

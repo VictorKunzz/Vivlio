@@ -2,6 +2,7 @@ package br.com.vivlio.shared.exception;
 
 import br.com.vivlio.shared.dto.ErroResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,5 +27,11 @@ public class ApiExceptionHandler {
         }
         return ResponseEntity.badRequest()
                 .body(new ErroResponse("Existem campos obrigatórios ou inválidos no formulário.", campos));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErroResponse> corpoInvalido(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErroResponse("Os dados enviados estão em um formato inválido."));
     }
 }
