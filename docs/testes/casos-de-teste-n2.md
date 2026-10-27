@@ -1,6 +1,6 @@
 # Casos de teste da N2
 
-Complemento ao [Plano de Testes da N1](Plano_de_Testes_Sebo_Comunitario.pdf) (TC01 a TC13). Aqui estão os casos das funcionalidades da N2 e os casos da N1 cujo resultado esperado mudou.
+Complemento ao [Plano de Testes](Plano_de_Testes_Sebo_Comunitario.md) (TC01 a TC19). Aqui estão os casos das funcionalidades da N2 e os casos da N1 cujo resultado esperado mudou.
 
 **Onde cada caso está automatizado:**
 - **B**: backend, JUnit (`cd backend && ./mvnw verify`)
