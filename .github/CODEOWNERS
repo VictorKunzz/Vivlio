@@ -13,14 +13,14 @@
 /backend/                   @Luis-Fernando-Pereira
 
 # Documentacao de projeto: requisitos, handoff, debitos tecnicos.
-/Docs/                      @VynicyusCandido @gustavotaques
+/docs/                      @VynicyusCandido @gustavotaques
 
 # Plano de testes: QA.
-/Docs/Plano_de_Testes_Sebo_Comunitario.pdf   @MRanderle
+/docs/testes/                @MRanderle
 
 # Infraestrutura e governanca do repositorio: DevOps.
 /.github/                   @VictorKunzz
-/Docs/devops/               @VictorKunzz
+/docs/devops/               @VictorKunzz
 /docker-compose.yml         @VictorKunzz
 /backend/Dockerfile         @VictorKunzz
 /backend/.dockerignore      @VictorKunzz
