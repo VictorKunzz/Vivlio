@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { mensagemDeErro } from '../services/erros';
 import { useAuth } from '../hooks/useAuth';
 import { GENEROS } from '../constants/generos';
 import Estrelas from '../components/Estrelas';
+import ModalResgate from '../components/ModalResgate';
+
+const MENSAGEM_SEM_CREDITO =
+  'Você precisa de pelo menos 1 crédito ativo para resgatar um livro. Doe um livro para ganhar créditos.';
 
 function Acervo() {
   const { usuario, atualizarSaldo } = useAuth();
@@ -15,7 +19,10 @@ function Acervo() {
   const [sucesso, setSucesso] = useState('');
   const [busca, setBusca] = useState('');
   const [genero, setGenero] = useState('');
-  const [resgatando, setResgatando] = useState(null);
+  const [selecionado, setSelecionado] = useState(null);
+  const [resgatando, setResgatando] = useState(false);
+
+  const semCredito = Boolean(usuario) && usuario.saldoCreditos < 1;
 
   useEffect(() => {
     let ativo = true;
@@ -55,22 +62,32 @@ function Acervo() {
     }
   }
 
-  async function aoResgatar(livro) {
+  function abrirResgate(livro) {
     setErro('');
     setSucesso('');
-    setResgatando(livro.id);
+    if (semCredito) {
+      // RN crítica: sem crédito o resgate é barrado aqui, antes de chegar à API.
+      setErro(MENSAGEM_SEM_CREDITO);
+      return;
+    }
+    setSelecionado(livro);
+  }
+
+  const fecharResgate = useCallback(() => setSelecionado(null), []);
+
+  async function aoResgatar(livro) {
+    setResgatando(true);
 
     try {
       const { data } = await api.post('/api/resgates', { livroId: livro.id });
       atualizarSaldo(data.saldoCreditos);
       setLivros((atuais) => atuais.filter((item) => item.id !== livro.id));
-      setSucesso(
-        `Resgate concluído. O livro "${livro.titulo}" é seu. Saldo atual: ${data.saldoCreditos}.`
-      );
+      setSucesso('Resgate confirmado! Combine a entrega na biblioteca.');
     } catch (falha) {
       setErro(mensagemDeErro(falha));
     } finally {
-      setResgatando(null);
+      setResgatando(false);
+      setSelecionado(null);
     }
   }
 
@@ -115,10 +132,9 @@ function Acervo() {
       {erro && <p className="erro">{erro}</p>}
       {sucesso && <p className="sucesso">{sucesso}</p>}
 
-      {usuario && usuario.saldoCreditos < 1 && (
+      {semCredito && (
         <p className="dica">
-          Você está sem créditos. <Link to="/doar">Doe um livro</Link> para
-          ganhar 1 crédito e poder resgatar.
+          {MENSAGEM_SEM_CREDITO} <Link to="/doar">Ir para a doação</Link>
         </p>
       )}
 
@@ -142,10 +158,11 @@ function Acervo() {
                 <button
                   type="button"
                   className="botao"
-                  onClick={() => aoResgatar(livro)}
-                  disabled={resgatando === livro.id}
+                  onClick={() => abrirResgate(livro)}
+                  disabled={semCredito}
+                  title={semCredito ? MENSAGEM_SEM_CREDITO : undefined}
                 >
-                  {resgatando === livro.id ? 'Resgatando...' : 'Resgatar'}
+                  Resgatar (1 Crédito)
                 </button>
               ) : (
                 <Link to="/login" className="botao botao-secundario">
@@ -155,6 +172,15 @@ function Acervo() {
             </li>
           ))}
         </ul>
+      )}
+
+      {selecionado && (
+        <ModalResgate
+          livro={selecionado}
+          resgatando={resgatando}
+          aoConfirmar={() => aoResgatar(selecionado)}
+          aoFechar={fecharResgate}
+        />
       )}
     </section>
   );
