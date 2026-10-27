@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Vivlio - Backend MVP (RF01 a RF05)",
+    "name": "Vivlio - Backend (N2: RF01 a RF06 + extrato)",
     "description": "Colecao dos casos de teste do backend. Variaveis: baseUrl (http://localhost:8080) e token (preenchida automaticamente pelo cadastro/login).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -373,7 +373,7 @@
       }
     },
     {
-      "name": "TC05 - Doacao com dados completos (+1 credito)",
+      "name": "TC05 - Doacao com dados completos e questionario (+1 credito, nota 3)",
       "event": [
         {
           "listen": "test",
@@ -383,7 +383,8 @@
               "pm.test('status 201', () => pm.response.to.have.status(201));",
               "const body = pm.response.json();",
               "pm.test('livro DISPONIVEL', () => pm.expect(body.livro.status).to.eql('DISPONIVEL'));",
-              "pm.test('saldo incrementado', () => pm.expect(body.saldoCreditos).to.be.above(0));"
+              "pm.test('saldo incrementado', () => pm.expect(body.saldoCreditos).to.be.above(0));",
+              "pm.test('nota = menor criterio (exemplo da ficha: 3)', () => pm.expect(body.livro.nota).to.eql(3));"
             ]
           }
         }
@@ -412,7 +413,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"titulo\": \"Dom Casmurro\",\n  \"autor\": \"Machado de Assis\",\n  \"genero\": \"Romance\"\n}"
+          "raw": "{\n  \"titulo\": \"Dom Casmurro\",\n  \"autor\": \"Machado de Assis\",\n  \"genero\": \"Romance\",\n  \"avaliacao\": {\n    \"capa\": \"CANTOS_LEVEMENTE_GASTOS\",\n    \"lombada\": \"RETA\",\n    \"paginas\": \"VARIAS_ORELHAS\",\n    \"marcacoes\": \"NOME_DO_DONO\",\n    \"manchas\": \"NENHUMA\",\n    \"odor\": \"NENHUM\",\n    \"eliminatorios\": [],\n    \"didaticoComExerciciosRespondidos\": false,\n    \"sobrecapaAusente\": false\n  }\n}"
         }
       }
     },
@@ -425,7 +426,7 @@
             "type": "text/javascript",
             "exec": [
               "pm.test('status 400', () => pm.response.to.have.status(400));",
-              "pm.test('campos sinalizados', () => pm.expect(pm.response.json().campos).to.have.all.keys('titulo', 'autor', 'genero'));"
+              "pm.test('campos sinalizados', () => pm.expect(pm.response.json().campos).to.include.all.keys('titulo', 'autor', 'genero', 'avaliacao'));"
             ]
           }
         }
@@ -455,6 +456,128 @@
         "body": {
           "mode": "raw",
           "raw": "{\n  \"titulo\": \"\",\n  \"autor\": \"\",\n  \"genero\": \"\"\n}"
+        }
+      }
+    },
+    {
+      "name": "AV00 - Questionario de avaliacao (opcoes sem nota)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('6 criterios', () => pm.expect(body.criterios).to.have.lengthOf(6));",
+              "pm.test('6 eliminatorios', () => pm.expect(body.eliminatorios).to.have.lengthOf(6));",
+              "pm.test('nenhuma opcao expoe a nota', () => body.criterios.forEach(c => c.opcoes.forEach(o => pm.expect(o).to.not.have.property('nota'))));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/avaliacao/questionario",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avaliacao",
+            "questionario"
+          ]
+        }
+      }
+    },
+    {
+      "name": "AV01 - Doacao com eliminatorio (mofo) e recusada",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 422', () => pm.response.to.have.status(422));",
+              "pm.test('mensagem explica a recusa', () => pm.expect(pm.response.json().mensagem).to.include('não pode ser doado'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/livros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "livros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Livro mofado\",\n  \"autor\": \"Autor\",\n  \"genero\": \"Romance\",\n  \"avaliacao\": {\n    \"capa\": \"CANTOS_LEVEMENTE_GASTOS\",\n    \"lombada\": \"RETA\",\n    \"paginas\": \"VARIAS_ORELHAS\",\n    \"marcacoes\": \"NOME_DO_DONO\",\n    \"manchas\": \"NENHUMA\",\n    \"odor\": \"NENHUM\",\n    \"eliminatorios\": [\n      \"MOFO\"\n    ],\n    \"didaticoComExerciciosRespondidos\": false,\n    \"sobrecapaAusente\": false\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "AV02 - Doacao sem questionario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 400', () => pm.response.to.have.status(400));",
+              "pm.test('campo avaliacao sinalizado', () => pm.expect(pm.response.json().campos).to.have.property('avaliacao'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/livros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "livros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Dom Casmurro\",\n  \"autor\": \"Machado de Assis\",\n  \"genero\": \"Romance\"\n}"
         }
       }
     },
@@ -623,6 +746,48 @@
       }
     },
     {
+      "name": "AV03 - Didatico com exercicios respondidos (max. 2 estrelas)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));",
+              "pm.test('nota limitada a 2', () => pm.expect(pm.response.json().livro.nota).to.eql(2));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/livros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "livros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Matematica 6o ano\",\n  \"autor\": \"Autor\",\n  \"genero\": \"Didatico\",\n  \"avaliacao\": {\n    \"capa\": \"SEM_DESGASTE\",\n    \"lombada\": \"RETA\",\n    \"paginas\": \"SEM_DOBRAS\",\n    \"marcacoes\": \"NENHUMA\",\n    \"manchas\": \"NENHUMA\",\n    \"odor\": \"NENHUM\",\n    \"eliminatorios\": [],\n    \"didaticoComExerciciosRespondidos\": true,\n    \"sobrecapaAusente\": false\n  }\n}"
+        }
+      }
+    },
+    {
       "name": "RNF02 - Resgate sem token (deve bloquear)",
       "event": [
         {
@@ -656,6 +821,72 @@
         "body": {
           "mode": "raw",
           "raw": "{\n  \"livroId\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "DT-05 - Extrato de creditos (saldo = entradas - saidas)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('saldo bate com as transacoes', () => pm.expect(body.saldo).to.eql(body.totalEntradas - body.totalSaidas));",
+              "pm.test('lista de transacoes', () => pm.expect(body.transacoes).to.be.an('array').with.lengthOf(body.totalEntradas + body.totalSaidas));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/creditos/extrato",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "creditos",
+            "extrato"
+          ]
+        }
+      }
+    },
+    {
+      "name": "RNF02 - Extrato sem token (deve bloquear)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/creditos/extrato",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "creditos",
+            "extrato"
+          ]
         }
       }
     }
