@@ -104,6 +104,9 @@ jobs:
       - run: npm run lint
         working-directory: frontend
 
+      - run: npm test
+        working-directory: frontend
+
       # --check, nunca `npm run format`: o script format escreve nos arquivos.
       - run: npx prettier --check .
         working-directory: frontend
