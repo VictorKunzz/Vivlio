@@ -47,7 +47,7 @@ services:
       # Sem valor padrao de proposito: o container se recusa a subir sem segredo
       # explicito. Mitiga o DT-03 no caminho do Docker sem tocar no codigo.
       JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no arquivo .env (use .env.example como base)}
-      JWT_EXPIRACAO_MS: ${JWT_EXPIRACAO_MS:-86400000}
+      JWT_EXPIRACAO_MS: ${JWT_EXPIRACAO_MS:-7200000}
       SERVER_PORT: 8080
     ports:
       - "${BACKEND_PORT:-8080}:8080"
