@@ -82,7 +82,6 @@ Material pronto para a execução: [Plano de Testes](../testes/Plano_de_Testes_S
 |---|---|
 | Aprovar os textos do DT-06 e registrar a ficha de avaliação como regra do RF06 (DT-07) | PO |
 | Decidir DT-09 (livros sem nota) e DT-12 (resgate do próprio livro) | PO |
-| Abrir as issues de DT-07 a DT-13 com o texto do [relatório de débitos](../debitos-tecnicos/README.md) | Engenheiro de Requisitos |
 | Executar o roteiro da N2 e registrar o resultado | QA |
 | Revisar e fazer merge dos PRs #15 a #20, nessa ordem | Devs |
 | PR `develop → main`, tag e release `v2.0.0` | DevOps |

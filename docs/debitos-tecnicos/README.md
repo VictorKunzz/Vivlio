@@ -12,15 +12,15 @@ Estado na versão **v2.0**. O relatório original da N1, com os cinco débitos h
 | DT-04 | Frontend sem nenhum teste automatizado | Médio-Alto | ✅ Resolvido | PR #19 · issue #6 |
 | DT-05 | Saldo de créditos duplicado, sem reconciliação | Médio | ✅ Resolvido | PR #18 · issue #10 |
 | DT-06 | Telas divergem dos critérios de aceitação | Médio | ✅ Resolvido (textos aguardam aval da PO) | PR #15 · issue #11 |
-| DT-07 | Ficha de avaliação diverge da Especificação | Médio | 🔴 Aberto | — |
-| DT-08 | Conferência do sebo na entrega não existe no sistema | Alto | 🔴 Aberto | — |
-| DT-09 | Livros doados antes da avaliação ficam sem nota | Baixo | 🔴 Aberto | — |
-| DT-10 | Gênero não é validado contra a lista fixa | Baixo | 🔴 Aberto | — |
-| DT-11 | Acervo sem paginação e busca sem índice | Médio | 🔴 Aberto | — |
-| DT-12 | Usuário pode resgatar o próprio livro doado | Baixo | 🔴 Aberto | — |
-| DT-13 | CORS restrito a localhost | Médio | 🔴 Aberto | — |
+| DT-07 | Ficha de avaliação diverge da Especificação | Médio | 🔴 Aberto | issue #21 |
+| DT-08 | Conferência do sebo na entrega não existe no sistema | Alto | 🔴 Aberto | issue #22 |
+| DT-09 | Livros doados antes da avaliação ficam sem nota | Baixo | 🔴 Aberto | issue #23 |
+| DT-10 | Gênero não é validado contra a lista fixa | Baixo | 🔴 Aberto | issue #24 |
+| DT-11 | Acervo sem paginação e busca sem índice | Médio | 🔴 Aberto | issue #25 |
+| DT-12 | Usuário pode resgatar o próprio livro doado | Baixo | 🔴 Aberto | issue #26 |
+| DT-13 | CORS restrito a localhost | Médio | 🔴 Aberto | issue #27 |
 
-Os débitos DT-10 a DT-13 já constavam como "pontos de atenção" no handoff da N1 e foram promovidos a débito. DT-07 a DT-09 surgiram com a avaliação do livro (PR #13). **As issues de DT-07 a DT-13 ainda precisam ser abertas no GitHub** com o texto abaixo.
+Os débitos DT-10 a DT-13 já constavam como "pontos de atenção" no handoff da N1 e foram promovidos a débito. DT-07 a DT-09 surgiram com a avaliação do livro (PR #13). As issues de DT-07 a DT-13 são as #21 a #27, com o rótulo `debito-tecnico`.
 
 ---
 
