@@ -53,7 +53,7 @@ Regra: o doador responde 6 critérios (capa, lombada, páginas, marcações, man
 
 ## Como rodar a coleção do Postman
 
-A coleção supõe um **banco vazio** (ela cadastra `teste@vivlio.com` e resgata o livro de id 1):
+A coleção supõe um **banco vazio**: ela cadastra `teste@vivlio.com` e `segundo@vivlio.com` e resgata o livro de id 1.
 
 ```bash
 docker compose down -v && docker compose up -d

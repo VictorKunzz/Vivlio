@@ -12,6 +12,14 @@
     {
       "key": "token",
       "value": ""
+    },
+    {
+      "key": "tokenSegundo",
+      "value": ""
+    },
+    {
+      "key": "livroDisponivelId",
+      "value": ""
     }
   ],
   "item": [
@@ -663,6 +671,87 @@
       }
     },
     {
+      "name": "Preparacao TC11 - segundo usuario se cadastra",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set('tokenSegundo', pm.response.json().token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/registrar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "registrar"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Segundo Usuario\",\n  \"email\": \"segundo@vivlio.com\",\n  \"senha\": \"senhaSegura2\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Preparacao TC11 - segundo usuario doa um livro disponivel",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set('livroDisponivelId', pm.response.json().livro.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenSegundo}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/livros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "livros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"O Cortico\",\n  \"autor\": \"Aluisio Azevedo\",\n  \"genero\": \"Romance\",\n  \"avaliacao\": {\n    \"capa\": \"SEM_DESGASTE\",\n    \"lombada\": \"RETA\",\n    \"paginas\": \"SEM_DOBRAS\",\n    \"marcacoes\": \"NENHUMA\",\n    \"manchas\": \"NENHUMA\",\n    \"odor\": \"NENHUM\",\n    \"eliminatorios\": [],\n    \"didaticoComExerciciosRespondidos\": false,\n    \"sobrecapaAusente\": false\n  }\n}"
+        }
+      }
+    },
+    {
       "name": "TC11 - RN CRITICA: resgate com saldo 0 (bypass do frontend)",
       "event": [
         {
@@ -700,7 +789,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"livroId\": 1\n}"
+          "raw": "{\n  \"livroId\": {{livroDisponivelId}}\n}"
         }
       }
     },
