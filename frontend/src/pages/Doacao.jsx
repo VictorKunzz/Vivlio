@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import { mensagemDeErro } from '../services/erros';
+import {
+  MENSAGEM_CAMPOS_INVALIDOS,
+  errosDosCampos,
+  mensagemDeErro,
+} from '../services/erros';
 import { useAuth } from '../hooks/useAuth';
 import { GENEROS } from '../constants/generos';
 
@@ -12,6 +16,19 @@ const AVALIACAO_VAZIA = {
   sobrecapaAusente: false,
 };
 
+function validar({ titulo, autor, genero }, questionario, respostas) {
+  const erros = {};
+  if (!titulo.trim()) erros.titulo = 'O título é obrigatório.';
+  if (!autor.trim()) erros.autor = 'O autor é obrigatório.';
+  if (!genero) erros.genero = 'O gênero é obrigatório.';
+  questionario.criterios.forEach((criterio) => {
+    if (!respostas[criterio.campo]) {
+      erros[`avaliacao.${criterio.campo}`] = 'Escolha uma opção.';
+    }
+  });
+  return erros;
+}
+
 function Doacao() {
   const { atualizarSaldo } = useAuth();
 
@@ -21,6 +38,7 @@ function Doacao() {
   const [questionario, setQuestionario] = useState(null);
   const [avaliacao, setAvaliacao] = useState(AVALIACAO_VAZIA);
   const [erro, setErro] = useState('');
+  const [erros, setErros] = useState({});
   const [sucesso, setSucesso] = useState('');
   const [enviando, setEnviando] = useState(false);
 
@@ -67,8 +85,19 @@ function Doacao() {
     evento.preventDefault();
     setErro('');
     setSucesso('');
-    setEnviando(true);
 
+    const invalidos = validar(
+      { titulo, autor, genero },
+      questionario,
+      avaliacao.respostas
+    );
+    setErros(invalidos);
+    if (Object.keys(invalidos).length > 0) {
+      setErro(MENSAGEM_CAMPOS_INVALIDOS);
+      return;
+    }
+
+    setEnviando(true);
     try {
       const { data } = await api.post('/api/livros', {
         titulo,
@@ -84,14 +113,20 @@ function Doacao() {
       });
       atualizarSaldo(data.saldoCreditos);
       setSucesso(
-        `"${data.livro.titulo}" entrou no acervo com nota ${data.livro.nota} de 5. Seu saldo agora é de ${data.saldoCreditos}.`
+        `Livro cadastrado! Você ganhou 1 crédito. Nota do estado: ${data.livro.nota} de 5.`
       );
       setTitulo('');
       setAutor('');
       setGenero('');
       setAvaliacao(AVALIACAO_VAZIA);
     } catch (falha) {
-      setErro(mensagemDeErro(falha));
+      const daApi = errosDosCampos(falha);
+      setErros(daApi);
+      setErro(
+        Object.keys(daApi).length > 0
+          ? MENSAGEM_CAMPOS_INVALIDOS
+          : mensagemDeErro(falha)
+      );
     } finally {
       setEnviando(false);
     }
@@ -105,15 +140,19 @@ function Doacao() {
         Descreva o estado do livro com sinceridade: o sebo confere na entrega.
       </p>
 
-      <form className="formulario" onSubmit={aoEnviar}>
+      <form className="formulario" onSubmit={aoEnviar} noValidate>
         <label className="campo">
           Título
           <input
             type="text"
             value={titulo}
             onChange={(evento) => setTitulo(evento.target.value)}
-            required
+            className={erros.titulo ? 'invalido' : undefined}
+            aria-invalid={Boolean(erros.titulo)}
           />
+          {erros.titulo && (
+            <small className="mensagem-campo">{erros.titulo}</small>
+          )}
         </label>
 
         <label className="campo">
@@ -122,8 +161,12 @@ function Doacao() {
             type="text"
             value={autor}
             onChange={(evento) => setAutor(evento.target.value)}
-            required
+            className={erros.autor ? 'invalido' : undefined}
+            aria-invalid={Boolean(erros.autor)}
           />
+          {erros.autor && (
+            <small className="mensagem-campo">{erros.autor}</small>
+          )}
         </label>
 
         <label className="campo">
@@ -131,7 +174,8 @@ function Doacao() {
           <select
             value={genero}
             onChange={(evento) => setGenero(evento.target.value)}
-            required
+            className={erros.genero ? 'invalido' : undefined}
+            aria-invalid={Boolean(erros.genero)}
           >
             <option value="">Selecione</option>
             {GENEROS.map((item) => (
@@ -140,6 +184,9 @@ function Doacao() {
               </option>
             ))}
           </select>
+          {erros.genero && (
+            <small className="mensagem-campo">{erros.genero}</small>
+          )}
         </label>
 
         {!questionario && !erro && (
@@ -173,7 +220,14 @@ function Doacao() {
 
             {!recusado &&
               questionario.criterios.map((criterio) => (
-                <fieldset key={criterio.campo} className="pergunta">
+                <fieldset
+                  key={criterio.campo}
+                  className={
+                    erros[`avaliacao.${criterio.campo}`]
+                      ? 'pergunta invalida'
+                      : 'pergunta'
+                  }
+                >
                   <legend>{criterio.pergunta}</legend>
                   {criterio.opcoes.map((opcao) => (
                     <label key={opcao.codigo} className="opcao">
@@ -185,11 +239,15 @@ function Doacao() {
                           avaliacao.respostas[criterio.campo] === opcao.codigo
                         }
                         onChange={() => responder(criterio.campo, opcao.codigo)}
-                        required
                       />
                       {opcao.descricao}
                     </label>
                   ))}
+                  {erros[`avaliacao.${criterio.campo}`] && (
+                    <small className="mensagem-campo">
+                      {erros[`avaliacao.${criterio.campo}`]}
+                    </small>
+                  )}
                 </fieldset>
               ))}
 

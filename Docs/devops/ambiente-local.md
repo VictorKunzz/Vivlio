@@ -61,15 +61,15 @@ Todas têm padrão de desenvolvimento no `.env.example`, com uma exceção delib
 | `BACKEND_PORT` | `8080` | Porta publicada no host |
 | `JPA_DDL_AUTO` | `validate` | O schema vem das migrações Flyway em `backend/src/main/resources/db/migration`; o Hibernate só confere |
 | `JPA_SHOW_SQL` | `false` | Log de SQL |
-| `JWT_SECRET` | **nenhum** | Sem padrão de propósito: o compose falha se não for definido |
-| `JWT_EXPIRACAO_MS` | `86400000` | 24 horas |
+| `JWT_SECRET` | **nenhum** | Sem padrão de propósito: compose e aplicação falham se não for definido. Mínimo de 32 caracteres |
+| `JWT_EXPIRACAO_MS` | `7200000` | 2 horas |
 | `FRONTEND_PORT` | `5173` | Porta publicada no host |
 | `VITE_API_URL` | `http://localhost:8080` | Quem chama a API é o navegador do host, por isso `localhost` e não `backend` |
 
-Sobre o `JWT_SECRET`: a aplicação tem um valor padrão fixo versionado em
-`application.properties` (dívida DT-03). O compose não replica esse padrão — ele exige o valor.
-Isso não conserta a dívida, que precisa ser resolvida no código do backend, mas impede que o
-caminho do Docker herde uma chave que está pública no repositório.
+Sobre o `JWT_SECRET`: não existe mais valor padrão versionado (DT-03). Sem a variável, ou com
+menos de 32 caracteres, o backend não inicializa e informa o motivo no log. Para rodar fora do
+Docker, exporte a variável antes (`export JWT_SECRET=...` ou `$env:JWT_SECRET="..."`). Os testes
+automatizados usam o segredo próprio de `application-test.properties`.
 
 ## Limitações conhecidas
 
