@@ -20,4 +20,9 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    // Testes e utilitários de teste não são módulos de componente com hot reload.
+    files: ['src/test/**', '**/*.test.{js,jsx}'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
 ]);

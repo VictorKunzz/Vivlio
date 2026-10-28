@@ -1,0 +1,101 @@
+# Template de issue para debito tecnico.
+#
+# Os campos repetem os do Relatorio de Debitos Tecnicos (docs/debitos-tecnicos/README.md)
+# para que issue e documento tenham o mesmo formato. "Criterios de pronto" e o unico campo a mais:
+# da a issue uma condicao clara de fechamento, alinhada ao DoD.
+
+name: Débito técnico
+description: Registrar um atalho técnico assumido ou um problema estrutural a tratar depois
+title: "DT-XX: "
+labels: ["debito-tecnico"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use os mesmos campos do Relatório de Débitos Técnicos (`docs/debitos-tecnicos/README.md`).
+        Se houver marcador `// DEBT:` no código, ele deve citar o número desta issue.
+
+  - type: input
+    id: identificador
+    attributes:
+      label: Identificador
+      description: Número no relatório de débitos (DT-XX). Se for novo, use o próximo número livre.
+      placeholder: DT-07
+    validations:
+      required: true
+
+  - type: dropdown
+    id: impacto
+    attributes:
+      label: Impacto
+      options:
+        - Alto
+        - Médio-Alto
+        - Médio
+        - Baixo
+    validations:
+      required: true
+
+  - type: textarea
+    id: onde
+    attributes:
+      label: Onde
+      description: Arquivos, pastas ou configurações afetadas.
+      placeholder: frontend/package.json
+    validations:
+      required: true
+
+  - type: textarea
+    id: problema
+    attributes:
+      label: Problema
+      description: O que está errado ou faltando hoje, de forma verificável.
+    validations:
+      required: true
+
+  - type: textarea
+    id: consequencia
+    attributes:
+      label: Consequência
+      description: O que acontece se não for tratado. Cite RF, RNF, RN ou casos de teste (TCxx) afetados.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acao
+    attributes:
+      label: Ação recomendada
+      description: O que fazer para resolver.
+    validations:
+      required: true
+
+  - type: textarea
+    id: pronto
+    attributes:
+      label: Critérios de pronto
+      description: Como saber que o débito foi pago. Itens verificáveis.
+      placeholder: |
+        - [ ] ...
+        - [ ] CI verde
+        - [ ] Relatório de Débitos Técnicos atualizado (Situação = Resolvido)
+    validations:
+      required: true
+
+  - type: input
+    id: relacionados
+    attributes:
+      label: Débitos ou issues relacionados
+      placeholder: "DT-02, DT-06, #12"
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      description: Define quem precisa revisar (CODEOWNERS).
+      multiple: true
+      options:
+        - Backend
+        - Frontend
+        - Banco de dados
+        - DevOps / CI
+        - Documentação
