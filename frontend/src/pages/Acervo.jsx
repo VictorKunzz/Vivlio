@@ -23,6 +23,7 @@ function Acervo() {
   const [resgatando, setResgatando] = useState(false);
 
   const semCredito = Boolean(usuario) && usuario.saldoCreditos < 1;
+  const ehMeu = (livro) => Boolean(usuario) && livro.doadorId === usuario.id;
 
   useEffect(() => {
     let ativo = true;
@@ -154,7 +155,10 @@ function Acervo() {
               <Estrelas nota={livro.nota} />
               <p className="doador">Doado por {livro.doador}</p>
 
-              {usuario ? (
+              {usuario && ehMeu(livro) && (
+                <p className="chip chip-neutro">Você doou este livro</p>
+              )}
+              {usuario && !ehMeu(livro) && (
                 <button
                   type="button"
                   className="botao"
@@ -164,7 +168,8 @@ function Acervo() {
                 >
                   Resgatar (1 Crédito)
                 </button>
-              ) : (
+              )}
+              {!usuario && (
                 <Link to="/login" className="botao botao-secundario">
                   Entre para resgatar
                 </Link>
