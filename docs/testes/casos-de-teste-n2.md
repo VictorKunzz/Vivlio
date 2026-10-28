@@ -49,6 +49,14 @@ Regra: o doador responde 6 critérios (capa, lombada, páginas, marcações, man
 | SEC02 | Segredo fraco | `JWT_SECRET` com menos de 32 caracteres | Não inicializa; log explica o mínimo | Alta | B |
 | SEC03 | Token expirado | Usar token com mais de 2 horas | **401**; o frontend apaga o token e volta ao login (TC19) | Média | B, F |
 
+## Livros em doação no perfil
+
+| ID | Cenário | Passos | Resultado esperado | Prior. | Auto. |
+|---|---|---|---|---|---|
+| PF01 | Exige login | `GET /api/usuarios/me/doacoes` sem token | **401** | Alta | B |
+| PF02 | Só os livros do usuário ainda disponíveis | Doar 2 livros, ter 1 doado já resgatado e outro usuário com 1 livro | A lista traz só os 2 disponíveis do usuário, do mais recente ao mais antigo | Alta | B |
+| PF03 | Seção no perfil | Abrir **Meu perfil** | Tabela "Livros em doação" com título, autor e estrelas; sem livros: aviso com link para doar | Média | F |
+
 ## Casos da N1 com resultado esperado atualizado (DT-06)
 
 | ID | O que mudou | Auto. |

@@ -38,6 +38,15 @@ public class LivroService {
                 .toList();
     }
 
+    /** Livros que o usuário doou e que ninguém resgatou ainda. */
+    @Transactional(readOnly = true)
+    public List<LivroResponse> listarDoacoesDisponiveis(Long usuarioId) {
+        return livroRepository.findByDoadorIdAndStatusOrderByIdDesc(usuarioId, StatusLivro.DISPONIVEL)
+                .stream()
+                .map(LivroResponse::de)
+                .toList();
+    }
+
     @Transactional
     public DoacaoResponse doar(Long usuarioId, DoacaoRequest request) {
         Usuario doador = usuarioRepository.findById(usuarioId)

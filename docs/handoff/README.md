@@ -174,6 +174,7 @@ O backend é organizado por domínio (`auth`, `usuario`, `livro`, `avaliacao`, `
 | `GET /api/avaliacao/questionario` | Token | **N2.** Perguntas, opções e eliminatórios, sem as notas |
 | `POST /api/resgates` | Token | Resgata um livro e debita 1 crédito. **409** sem saldo, livro indisponível ou livro do próprio doador (DT-12) |
 | `GET /api/creditos/extrato` | Token | **N2.** Saldo, total de entradas e saídas e transações (mais recente primeiro) |
+| `GET /api/usuarios/me/doacoes` | Token | **N2.** Livros que o usuário logado doou e que ainda estão disponíveis (mais recente primeiro) |
 
 ### 6.2 Contrato dos endpoints novos
 
