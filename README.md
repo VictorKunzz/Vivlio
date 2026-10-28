@@ -69,6 +69,21 @@ Detalhes, variáveis de ambiente e o caminho sem Docker em [`docs/devops/ambient
 
 ## 👥 Equipe e Responsabilidades
 
+Equipe Horangotango (N2):
+
+| Nome | Papel / Função |
+| :--- | :--- |
+| **Gustavo Taques** | Product Owner (PO) |
+| **Vynicyus Cândido** | Engenheiro de Requisitos |
+| **João Pedro Angélico** | Quality Assurance (QA) e Desenvolvedor Frontend |
+| **Luis Fernando Pereira** | Desenvolvedor Backend |
+| **Victor Kunz** | DevOps |
+
+Contribuições de cada integrante na N2: [Matriz de Papéis](docs/equipe/matriz-de-papeis.md).
+
+<details>
+<summary>Equipe da N1 (Grupo Adriam, autora do MVP)</summary>
+
 | Nome | Papel / Função |
 | :--- | :--- |
 | **Ana** | Product Owner (PO) |
@@ -78,6 +93,8 @@ Detalhes, variáveis de ambiente e o caminho sem Docker em [`docs/devops/ambient
 | **João** | Desenvolvedor Frontend |
 | **Leonardo** | Desenvolvedor Backend |
 | **Gustavo** | DevOps |
+
+</details>
 
 ---
 

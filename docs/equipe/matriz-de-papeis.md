@@ -8,16 +8,15 @@ Atualizada para a entrega da **N2 (v2.0)**. O papel indica quem responde pela á
 
 | Integrante | GitHub | Papel | Área no repositório |
 |---|---|---|---|
-| João Pedro Angélico | [@joaopedroangelico](https://github.com/joaopedroangelico) | Dev Frontend | `/frontend/` |
+| Gustavo Taques | [@gustavotaques](https://github.com/gustavotaques) | Product Owner (PO) | `docs/` (DoR, DoD, prioridades) |
+| Vynicyus Cândido | [@VynicyusCandido](https://github.com/VynicyusCandido) | Engenheiro de Requisitos | `docs/` (requisitos, débitos técnicos) |
+| João Pedro Angélico | [@joaopedroangelico](https://github.com/joaopedroangelico) | Dev Frontend e QA | `/frontend/`, `docs/testes/` |
 | Luis Fernando Pereira | [@Luis-Fernando-Pereira](https://github.com/Luis-Fernando-Pereira) | Dev Backend | `/backend/` |
 | Victor Kunz | [@VictorKunzz](https://github.com/VictorKunzz) | DevOps | `.github/`, Docker, `docs/devops/`, convenções |
-| Alisson Gabriel Anderle | [@MRanderle](https://github.com/MRanderle) | QA | `docs/testes/` |
-| Vynicyus Candido | [@VynicyusCandido](https://github.com/VynicyusCandido) | ✏️ PO ou Engenheiro de Requisitos | `docs/` |
-| Gustavo Taques | [@gustavotaques](https://github.com/gustavotaques) | ✏️ PO ou Engenheiro de Requisitos | `docs/` |
 
 ## Histórico de contribuições na N2
 
-### João Pedro Angélico — Dev Frontend
+### João Pedro Angélico — Dev Frontend e QA
 
 | Atividade | Evidência |
 |---|---|
@@ -28,7 +27,13 @@ Atualizada para a entrega da **N2 (v2.0)**. O papel indica quem responde pela á
 | DT-05: extrato de créditos no perfil | [PR #18](https://github.com/VictorKunzz/Vivlio/pull/18) |
 | DT-04: testes de frontend (Vitest), consolidando os testes do #12 | [PR #19](https://github.com/VictorKunzz/Vivlio/pull/19) |
 | Documentação da N2: DER, débitos, handoff, casos de teste, Postman; consolidação do #5 | [PR #20](https://github.com/VictorKunzz/Vivlio/pull/20) |
-| ✏️ Outras atividades (pitch, reuniões, Project…) | |
+| Merge dos PRs da N2 | Merge de [#16](https://github.com/VictorKunzz/Vivlio/pull/16), [#17](https://github.com/VictorKunzz/Vivlio/pull/17), [#19](https://github.com/VictorKunzz/Vivlio/pull/19), [#5](https://github.com/VictorKunzz/Vivlio/pull/5) e [#7](https://github.com/VictorKunzz/Vivlio/pull/7) |
+| **QA:** casos de teste da N2 (AV, EX, SEC) e rastreabilidade do Plano de Testes com os testes automatizados | [`casos-de-teste-n2.md`](../testes/casos-de-teste-n2.md) · [Plano de Testes, seção 5.1](../testes/Plano_de_Testes_Sebo_Comunitario.md) |
+| **QA:** verificação com todos os PRs integrados: 53 testes de backend, 29 de frontend, Postman 45/45 em banco vazio, roteiros de tela TC03/05/06/09/10 | Descrição do [PR #20](https://github.com/VictorKunzz/Vivlio/pull/20) |
+| **QA:** correção da TC11 da coleção do Postman, que falhava desde a N1 | [PR #20](https://github.com/VictorKunzz/Vivlio/pull/20) |
+| Registro dos débitos DT-07 a DT-13 e atualização do GitHub Project | Issues [#21](https://github.com/VictorKunzz/Vivlio/issues/21) a [#27](https://github.com/VictorKunzz/Vivlio/issues/27) |
+| Pitch da N2 | PPTX entregue |
+| ✏️ Roteiro manual da QA (TC10, TC11, TC14, AV03, EX02, EX03) e outras atividades | ✏️ |
 
 Os PRs #13 e #15 a #20 foram desenvolvidos com apoio do Claude Code (assistente de IA), registrado como coautor nos commits.
 
@@ -37,10 +42,11 @@ Os PRs #13 e #15 a #20 foram desenvolvidos com apoio do Claude Code (assistente 
 | Atividade | Evidência |
 |---|---|
 | Revisão e aprovação da evolução da N2 | Revisão e merge do [PR #13](https://github.com/VictorKunzz/Vivlio/pull/13) |
+| Merge das correções da N2 | Merge de [#15](https://github.com/VictorKunzz/Vivlio/pull/15) (DT-06) e [#18](https://github.com/VictorKunzz/Vivlio/pull/18) (DT-05) |
 | Registro dos débitos técnicos herdados como issues | [#6](https://github.com/VictorKunzz/Vivlio/issues/6), [#8](https://github.com/VictorKunzz/Vivlio/issues/8), [#9](https://github.com/VictorKunzz/Vivlio/issues/9), [#10](https://github.com/VictorKunzz/Vivlio/issues/10), [#11](https://github.com/VictorKunzz/Vivlio/issues/11) |
 | Template de issue para débito técnico | [PR #7](https://github.com/VictorKunzz/Vivlio/pull/7) |
-| Testes de frontend (DT-04): `AuthProvider` e `erros` incorporados ao #19 | [PR #12](https://github.com/VictorKunzz/Vivlio/pull/12) → [#19](https://github.com/VictorKunzz/Vivlio/pull/19) (coautor) |
-| Revisão em markdown da Especificação, do Plano de Testes e do README do frontend, incorporada ao #20 | [PR #5](https://github.com/VictorKunzz/Vivlio/pull/5) → [#20](https://github.com/VictorKunzz/Vivlio/pull/20) (coautor) |
+| Testes de frontend (DT-04): `AuthProvider` e `erros` incorporados ao #19 | [PR #12](https://github.com/VictorKunzz/Vivlio/pull/12) (fechado, consolidado) → [#19](https://github.com/VictorKunzz/Vivlio/pull/19) (coautor) |
+| Revisão em markdown da Especificação, do Plano de Testes e do README do frontend | [PR #5](https://github.com/VictorKunzz/Vivlio/pull/5) (merged), atualizada para a v2.0 no [#20](https://github.com/VictorKunzz/Vivlio/pull/20) (coautor) |
 | ✏️ Outras atividades | |
 
 ### Victor Kunz — DevOps
@@ -54,34 +60,27 @@ Os PRs #13 e #15 a #20 foram desenvolvidos com apoio do Claude Code (assistente 
 | GitHub Project da equipe | [Horangotango - Vivlio (2° Projeto)](https://github.com/users/VictorKunzz/projects/4) |
 | ✏️ Outras atividades | |
 
-### Alisson Gabriel Anderle — QA
+### Vynicyus Cândido — Engenheiro de Requisitos
 
 | Atividade | Evidência |
 |---|---|
-| ✏️ Execução do roteiro de testes da N2 | ✏️ |
-| ✏️ Validação dos casos TC10/TC11/TC14 e AV03/EX02/EX03 | ✏️ |
-| ✏️ Outras atividades | |
+| ✏️ Requisitos da N2 e política de débito técnico | ✏️ |
+| ✏️ Outras atividades | ✏️ |
 
-Material pronto para a execução: [Plano de Testes](../testes/Plano_de_Testes_Sebo_Comunitario.md), [casos da N2](../testes/casos-de-teste-n2.md) e a coleção do Postman.
-
-### Vynicyus Candido — ✏️ papel
+### Gustavo Taques — Product Owner (PO)
 
 | Atividade | Evidência |
 |---|---|
-| ✏️ | ✏️ |
-
-### Gustavo Taques — ✏️ papel
-
-| Atividade | Evidência |
-|---|---|
-| ✏️ | ✏️ |
+| ✏️ Definição da evolução da N2 e da ficha de avaliação | ✏️ |
+| ✏️ DoR/DoD e priorização do backlog | ✏️ |
+| ✏️ Outras atividades | ✏️ |
 
 ## Pendências que dependem dos papéis
 
 | Pendência | Responsável |
 |---|---|
-| Aprovar os textos do DT-06 e registrar a ficha de avaliação como regra do RF06 (DT-07) | PO |
-| Decidir DT-09 (livros sem nota) e DT-12 (resgate do próprio livro) | PO |
-| Executar o roteiro da N2 e registrar o resultado | QA |
-| Revisar e fazer merge dos PRs #15 a #20, nessa ordem | Devs |
-| PR `develop → main`, tag e release `v2.0.0` | DevOps |
+| Aprovar os textos do DT-06 e registrar a ficha de avaliação como regra do RF06 (DT-07, #21) | PO (Gustavo) |
+| Decidir DT-09 (#23, livros sem nota) e DT-12 (#26, resgate do próprio livro) | PO (Gustavo) |
+| Executar o roteiro manual da N2 e registrar o resultado | QA (João) |
+| Revisar e fazer merge do PR #20 (#15 a #19 já entraram) | Devs |
+| PR `develop → main`, tag e release `v2.0.0` | DevOps (Victor) |
