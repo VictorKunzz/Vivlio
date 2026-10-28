@@ -410,6 +410,12 @@ a:hover {
   cursor: pointer;
 }
 
+.opcao-nenhuma {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--cor-borda);
+  font-weight: 600;
+}
+
 .opcao input {
   margin-top: 0.2rem;
   accent-color: var(--cor-destaque);

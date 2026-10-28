@@ -12,17 +12,24 @@ import { GENEROS } from '../constants/generos';
 const AVALIACAO_VAZIA = {
   respostas: {},
   eliminatorios: [],
+  // Confirmação explícita de que nenhum eliminatório se aplica: a pergunta só é
+  // considerada respondida com um problema marcado ou com esta opção.
+  semProblemas: false,
   didaticoComExerciciosRespondidos: false,
   sobrecapaAusente: false,
 };
 
-function validar({ titulo, autor, genero }, questionario, respostas) {
+function validar({ titulo, autor, genero }, questionario, avaliacao) {
   const erros = {};
   if (!titulo.trim()) erros.titulo = 'O título é obrigatório.';
   if (!autor.trim()) erros.autor = 'O autor é obrigatório.';
   if (!genero) erros.genero = 'O gênero é obrigatório.';
+  if (!avaliacao.semProblemas && avaliacao.eliminatorios.length === 0) {
+    erros.eliminatorios =
+      'Marque os problemas do livro ou confirme que ele não tem nenhum.';
+  }
   questionario.criterios.forEach((criterio) => {
-    if (!respostas[criterio.campo]) {
+    if (!avaliacao.respostas[criterio.campo]) {
       erros[`avaliacao.${criterio.campo}`] = 'Escolha uma opção.';
     }
   });
@@ -71,9 +78,18 @@ function Doacao() {
   function alternarEliminatorio(codigo) {
     setAvaliacao((atual) => ({
       ...atual,
+      semProblemas: false,
       eliminatorios: atual.eliminatorios.includes(codigo)
         ? atual.eliminatorios.filter((item) => item !== codigo)
         : [...atual.eliminatorios, codigo],
+    }));
+  }
+
+  function alternarSemProblemas() {
+    setAvaliacao((atual) => ({
+      ...atual,
+      semProblemas: !atual.semProblemas,
+      eliminatorios: [],
     }));
   }
 
@@ -89,7 +105,7 @@ function Doacao() {
     const invalidos = validar(
       { titulo, autor, genero },
       questionario,
-      avaliacao.respostas
+      avaliacao
     );
     setErros(invalidos);
     if (Object.keys(invalidos).length > 0) {
@@ -197,7 +213,9 @@ function Doacao() {
           <>
             <h2 className="titulo-secao">Estado do livro</h2>
 
-            <fieldset className="pergunta">
+            <fieldset
+              className={erros.eliminatorios ? 'pergunta invalida' : 'pergunta'}
+            >
               <legend>O livro tem algum destes problemas?</legend>
               {questionario.eliminatorios.map((item) => (
                 <label key={item.codigo} className="opcao">
@@ -209,6 +227,17 @@ function Doacao() {
                   {item.descricao}
                 </label>
               ))}
+              <label className="opcao opcao-nenhuma">
+                <input
+                  type="checkbox"
+                  checked={avaliacao.semProblemas}
+                  onChange={alternarSemProblemas}
+                />
+                Não tem nenhum destes problemas.
+              </label>
+              {erros.eliminatorios && (
+                <small className="mensagem-campo">{erros.eliminatorios}</small>
+              )}
             </fieldset>
 
             {recusado && (
