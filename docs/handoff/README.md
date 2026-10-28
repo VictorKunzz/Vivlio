@@ -135,7 +135,7 @@ Nada é mock: o frontend conversa com a API real, e a API grava no PostgreSQL.
 
 **5.5 O crédito sai antes da conferência.** Enquanto o DT-08 não for feito, o crédito depende da honestidade do doador.
 
-**5.6 Ainda pendentes:** gênero sem validação no backend (DT-10), acervo sem paginação (DT-11), resgate do próprio livro permitido (DT-12) e CORS só para `localhost` (DT-13, obrigatório antes de publicar).
+**5.6 Ainda pendentes:** gênero sem validação no backend (DT-10), acervo sem paginação (DT-11) e CORS só para `localhost` (DT-13, obrigatório antes de publicar).
 
 ## 6. Onde encontrar as coisas
 
@@ -169,10 +169,10 @@ O backend é organizado por domínio (`auth`, `usuario`, `livro`, `avaliacao`, `
 | `POST /api/auth/registrar` | Público | Cria conta (saldo inicia em 0) e devolve token |
 | `POST /api/auth/login` | Público | Autentica e devolve token |
 | `GET /api/usuarios/me` | Token | Perfil e saldo do usuário logado |
-| `GET /api/livros` | Público | Acervo disponível (params `busca`, `genero`), com `nota` e `sobrecapaAusente` |
+| `GET /api/livros` | Público | Acervo disponível (params `busca`, `genero`), com `nota`, `sobrecapaAusente` e `doadorId` |
 | `POST /api/livros` | Token | Doa um livro com questionário. **201** aprovado (+1 crédito), **422** eliminatório, **400** inválido |
 | `GET /api/avaliacao/questionario` | Token | **N2.** Perguntas, opções e eliminatórios, sem as notas |
-| `POST /api/resgates` | Token | Resgata um livro e debita 1 crédito. **409** sem saldo |
+| `POST /api/resgates` | Token | Resgata um livro e debita 1 crédito. **409** sem saldo, livro indisponível ou livro do próprio doador (DT-12) |
 | `GET /api/creditos/extrato` | Token | **N2.** Saldo, total de entradas e saídas e transações (mais recente primeiro) |
 | `GET /api/usuarios/me/doacoes` | Token | **N2.** Livros que o usuário logado doou e que ainda estão disponíveis (mais recente primeiro) |
 

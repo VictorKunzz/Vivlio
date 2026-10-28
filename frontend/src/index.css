@@ -273,8 +273,17 @@ a:hover {
   color: var(--cor-texto-suave);
 }
 
-.card-livro .botao {
+.card-livro .botao,
+.card-livro .chip-neutro {
   margin-top: auto;
+}
+
+.chip-neutro {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+  background-color: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
 }
 
 .chip {
@@ -408,6 +417,12 @@ a:hover {
   gap: 0.5rem;
   font-size: 0.9rem;
   cursor: pointer;
+}
+
+.opcao-nenhuma {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--cor-borda);
+  font-weight: 600;
 }
 
 .opcao input {

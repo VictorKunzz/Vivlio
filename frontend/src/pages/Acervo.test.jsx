@@ -76,6 +76,18 @@ describe('Acervo', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
+  it('DT-12: no livro que o próprio usuário doou não há botão de resgate', async () => {
+    api.get.mockResolvedValue({
+      data: [{ ...LIVRO, doador: USUARIO.nome, doadorId: USUARIO.id }],
+    });
+    renderizar(<Acervo />, { auth: { usuario: USUARIO } });
+
+    expect(await screen.findByText('Você doou este livro')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Resgatar (1 Crédito)' })
+    ).not.toBeInTheDocument();
+  });
+
   it('cancelar o modal não resgata', async () => {
     renderizar(<Acervo />, { auth: { usuario: USUARIO } });
 

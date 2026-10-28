@@ -110,6 +110,34 @@ class ResgateControllerTest extends TesteIntegracao {
     }
 
     @Test
+    @DisplayName("DT-12 - doador nao pode resgatar o proprio livro: 409 e nada muda no banco")
+    void naoDeveResgatarOProprioLivro() throws Exception {
+        doador.setSaldoCreditos(1);
+        doador = usuarioRepository.save(doador);
+
+        mockMvc.perform(post("/api/resgates")
+                        .header("Authorization", "Bearer " + jwtService.gerarToken(doador.getEmail()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new ResgateRequest(livro.getId()))))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.mensagem").value("Você não pode resgatar um livro que você mesmo doou."));
+
+        Livro naoResgatado = livroRepository.findById(livro.getId()).orElseThrow();
+        assertThat(naoResgatado.getStatus()).isEqualTo(StatusLivro.DISPONIVEL);
+        assertThat(naoResgatado.getRecebedor()).isNull();
+        assertThat(usuarioRepository.findById(doador.getId()).orElseThrow().getSaldoCreditos()).isEqualTo(1);
+        assertThat(transacaoCreditoRepository.count()).isZero();
+    }
+
+    @Test
+    @DisplayName("DT-12 - o acervo informa quem doou cada livro (doadorId)")
+    void acervoInformaODoador() throws Exception {
+        mockMvc.perform(get("/api/livros"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].doadorId").value(doador.getId()));
+    }
+
+    @Test
     @DisplayName("Resgate de livro inexistente retorna 404")
     void naoDeveResgatarLivroInexistente() throws Exception {
         darCreditos(1);
