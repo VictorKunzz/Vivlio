@@ -138,11 +138,11 @@ Rodar antes de abrir o PR evita ida e volta:
 
 ```bash
 docker compose exec backend ./mvnw -B -ntp verify
-cd frontend && npm run lint && npx prettier --check . && npm run build
+cd frontend && npm run lint && npm test && npx prettier --check . && npm run build
 ```
 
 As versões de Java e Node são fixadas no workflow e nos Dockerfiles, nunca herdadas da máquina.
-O motivo está documentado em [`Docs/devops/ambiente-local.md`](Docs/devops/ambiente-local.md):
+O motivo está documentado em [`docs/devops/ambiente-local.md`](docs/devops/ambiente-local.md):
 o Lombok que este projeto resolve não funciona em JDK 23, e falha sem dizer por quê.
 
 Formatação: `npm run format` **escreve** nos arquivos e serve para uso local. O CI usa
@@ -151,7 +151,7 @@ Formatação: `npm run format` **escreve** nos arquivos e serve para uso local. 
 ## Ambiente de desenvolvimento
 
 `cp .env.example .env && docker compose up`. Detalhes, variáveis de ambiente e o caminho sem
-Docker em [`Docs/devops/ambiente-local.md`](Docs/devops/ambiente-local.md).
+Docker em [`docs/devops/ambiente-local.md`](docs/devops/ambiente-local.md).
 
 Nunca commite `.env`. Nunca coloque credencial, chave ou token em código, em workflow ou em
 documento. Se um segredo vazar num commit, trocar o segredo é obrigatório — o histórico já foi
@@ -163,7 +163,8 @@ Atalho técnico assumido no caminho vira issue de débito técnico, no formato q
 Requisitos definiu na seção 2 do Acordo. Marcador no código (`// DEBT:`) sempre com a issue
 vinculada.
 
-Os cinco débitos herdados da equipe anterior estão em `Docs/Vivlio - Debitos Tecnicos.docx`.
+A situação de cada débito, os herdados da N1 e os registrados na N2, está em
+[`docs/debitos-tecnicos/README.md`](docs/debitos-tecnicos/README.md).
 
 ## Quem decide o que
 

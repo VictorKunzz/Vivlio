@@ -1,9 +1,12 @@
 # Documento de Especificação de Requisitos e DoR
 
-> Revisão de outubro/2026 (equipe 2). A versão original da equipe anterior está preservada em
-> `Docs/documentação_defasada/`. Alterações: nomes de tabelas alinhados ao banco real, situação dos
-> protótipos registrada, validações e situação atual de cada tarefa detalhadas e nova seção
-> [Modelo de Dados Implementado](#modelo-de-dados-implementado-postgresql).
+> Revisão de outubro/2026 (equipe 2), por Luis Fernando, atualizada para a **v2.0 (N2)**. A versão
+> original da equipe anterior continua neste diretório (`.docx`). Alterações: nomes de tabelas
+> alinhados ao banco real, situação dos protótipos registrada, validações e situação de cada tarefa
+> detalhadas. O modelo de dados está no [DER](../DER/README.md).
+>
+> O texto dos requisitos e critérios de aceitação é responsabilidade da PO e não foi alterado. Onde a
+> implementação diverge, a linha **Situação na v2.0** explica.
 
 ## Checklist Padrão de DoR (Aplicado a todos os cards)
 
@@ -30,7 +33,7 @@
   - **Cenário de Erro (Exceção):** Se o usuário tentar enviar o formulário sem os campos obrigatórios, o sistema bloqueia a ação e destaca os campos em vermelho.
 - **Regra de Negócio (RN):** Doar 1 livro = ganha 1 crédito (Proporção estrita de 1:1).
 - **Validações implementadas:** título, autor e gênero são obrigatórios (espaços nas pontas são removidos); sem eles a API responde 400 e nenhum crédito é gerado. O gênero é texto livre: o backend não valida contra a lista exibida no formulário.
-- **Situação atual (out/2026):** implementado. A mensagem de sucesso exibida pela tela é *"'&lt;título&gt;' entrou no acervo. Seu saldo agora é de N."*, diferente da especificada acima (ver DT-06).
+- **Situação na v2.0:** implementado conforme o critério. A tela exibe *"Livro cadastrado! Você ganhou 1 crédito."* seguida da nota do estado e destaca em vermelho todos os campos inválidos (PR #15). Desde a N2 a doação também exige o questionário de avaliação (Tarefa 4).
 - **Protótipo / Interface:** `[Link Figma - Tela de Nova Doação]` — link não fornecido pela equipe anterior; protótipo pendente.
 - **Mapeamento de Banco de Dados:**
   - Inserir em `livros` (status: `'DISPONIVEL'`).
@@ -49,7 +52,7 @@
   - **Mensagem de Erro Esperada:** *"Você precisa de pelo menos 1 crédito ativo para resgatar um livro. Doe um livro para ganhar créditos."*
 - **Regra de Negócio (RN): [RN CRÍTICA]** Um usuário só pode resgatar um livro se tiver pelo menos 1 crédito ativo na conta.
 - **Validações implementadas:** livro não informado → 400; livro inexistente → 404; livro já resgatado → 409 *"Este livro não está mais disponível para resgate."*; saldo 0 → 409 com a mensagem de erro esperada. Usuário e livro são travados com lock pessimista durante o resgate (RNF01).
-- **Situação atual (out/2026):** implementado no backend. No frontend o resgate é feito pelo botão "Resgatar" do card do acervo: não há página de detalhes nem modal de confirmação, o botão continua habilitado com saldo 0 (o bloqueio vem da resposta 409 da API) e a mensagem de sucesso difere da especificada (ver DT-06).
+- **Situação na v2.0:** implementado no backend e no frontend (PR #15). O botão "Resgatar (1 Crédito)" do card abre um **modal** com os detalhes do livro (estado, sobrecapa, doador) e a confirmação; não há página de detalhes separada. Com saldo 0 o botão fica desabilitado, a mensagem de erro esperada aparece na tela e nenhuma chamada é feita à API. Depois da confirmação: *"Resgate confirmado! Combine a entrega na biblioteca."*
 - **Protótipo / Interface:** `[Link Figma - Tela de Detalhes do Livro Modal de Confirmação]` — link não fornecido pela equipe anterior; protótipo pendente.
 - **Mapeamento de Banco de Dados:**
   - Atualizar `livros` (status: `'RESGATADO'`, `id_usuario_recebedor`).
@@ -67,7 +70,7 @@
   - **Cenário de Erro (Exceção):** Se o e-mail já estiver cadastrado, o sistema exibe: *"E-mail já cadastrado. Por favor, faça login."*
 - **Regra de Negócio (RN):** Todo novo usuário inicia obrigatoriamente com saldo = 0 créditos.
 - **Validações implementadas:** nome obrigatório; e-mail obrigatório, em formato válido e gravado em minúsculas; senha obrigatória com no mínimo 6 caracteres, salva com hash BCrypt. E-mail duplicado → 409.
-- **Situação atual (out/2026):** implementado. Após o cadastro o usuário já fica autenticado (a API devolve o token JWT).
+- **Situação na v2.0:** implementado. Após o cadastro o usuário já fica autenticado (a API devolve o token JWT, válido por 2 horas). Campos vazios ou inválidos são destacados em vermelho no formulário.
 - **Protótipo / Interface:** `[Link Figma - Tela de Registro]` — link não fornecido pela equipe anterior; protótipo pendente.
 - **Mapeamento de Banco de Dados:**
   - Inserir em `usuarios` (`nome`, `email`, `senha_hash`, `saldo_creditos` = 0).
@@ -82,7 +85,14 @@
   - **Cenário Feliz:** No formulário de doação, o usuário seleciona de 1 a 5 estrelas. A avaliação é salva e passa a ser exibida publicamente no card do livro.
   - **Cenário de Erro (Exceção):** O usuário tenta inserir um valor fora do intervalo (ex: 0 ou 6 via manipulação de requisição). O backend (Spring Boot) rejeita com erro 400 Bad Request.
 - **Regra de Negócio (RN):** A nota de conservação deve ser um número inteiro, mínimo de 1 e máximo de 5.
-- **Situação atual (out/2026):** não implementado. Recomendado adotar migrações versionadas (DT-01) antes de criar a coluna.
+- **Situação na v2.0:** implementado de forma **diferente** do critério acima (PR #13), seguindo a ficha de avaliação definida pela equipe:
+  - o doador **não escolhe a estrela**: responde 6 perguntas (capa, lombada, páginas, marcações, manchas, odor) e o servidor calcula a nota como a **menor** entre elas;
+  - eliminatórios (página faltando, mofo, dano por água, infestação, texto ilegível, capa separada) recusam o livro com **422**, sem gerar crédito;
+  - didático com exercícios respondidos fica com no máximo 2; sobrecapa ausente só é registrada;
+  - código de opção inexistente é recusado com 400; a nota nunca vem do cliente;
+  - a nota fica na coluna `nota_estado` (não `estado_conservacao`), criada pela migração Flyway `V2`.
+
+  **Pendente com a PO (DT-07):** registrar a ficha como regra oficial deste RF e reescrever o critério de aceitação. Casos de teste em [`casos-de-teste-n2.md`](../testes/casos-de-teste-n2.md).
 - **Protótipo / Interface:** `[Link Figma - Componente de Estrelas / Card do Livro]` — link não fornecido pela equipe anterior; protótipo pendente.
 - **Mapeamento de Banco de Dados:**
   - Nova coluna ou tabela: atualizar a tabela `livros` adicionando coluna `estado_conservacao` (Integer 1-5).
@@ -111,38 +121,5 @@
 
 ## Modelo de Dados Implementado (PostgreSQL)
 
-*Estado do banco em outubro/2026. O schema é gerado pelo Hibernate (`ddl-auto=update`) a partir das
-entidades JPA; não há scripts SQL versionados (ver DT-01). Todas as chaves primárias são `bigint` com
-geração por identidade.*
-
-### `usuarios`
-
-| Coluna | Tipo | Restrições | Observação |
-| :--- | :--- | :--- | :--- |
-| `id` | bigint | PK | |
-| `nome` | varchar(255) | not null | |
-| `email` | varchar(255) | not null, unique | Gravado em minúsculas. |
-| `senha_hash` | varchar(255) | not null | Hash BCrypt (RNF03). |
-| `saldo_creditos` | integer | not null | Inicia em 0. Saldo corrente; o histórico fica em `transacoes_credito`. |
-
-### `livros`
-
-| Coluna | Tipo | Restrições | Observação |
-| :--- | :--- | :--- | :--- |
-| `id` | bigint | PK | |
-| `titulo` | varchar(255) | not null | |
-| `autor` | varchar(255) | not null | |
-| `genero` | varchar(255) | not null | Texto livre. |
-| `status` | varchar(255) | not null | `DISPONIVEL` ou `RESGATADO`. |
-| `id_usuario_doador` | bigint | not null, FK → `usuarios.id` | Quem doou. |
-| `id_usuario_recebedor` | bigint | FK → `usuarios.id` | Preenchido no resgate. |
-
-### `transacoes_credito`
-
-| Coluna | Tipo | Restrições | Observação |
-| :--- | :--- | :--- | :--- |
-| `id` | bigint | PK | |
-| `id_usuario` | bigint | not null, FK → `usuarios.id` | |
-| `tipo` | varchar(255) | not null | `ENTRADA` ou `SAIDA`. |
-| `descricao` | varchar(255) | not null | `'Doação de livro'` ou `'Resgate de livro'`. |
-| `criado_em` | timestamp | not null | Data e hora da transação. |
+O modelo de dados está no [DER](../DER/README.md), mantido junto com as migrações Flyway em
+`backend/src/main/resources/db/migration`.

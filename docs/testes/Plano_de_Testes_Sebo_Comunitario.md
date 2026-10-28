@@ -2,16 +2,17 @@
 
 **Projeto:** Sebo | **Responsável:** Daniela (QA)
 
-> Revisão de outubro/2026 (equipe 2). A versão original da equipe anterior está preservada em
-> `Docs/documentação_defasada/`. Alterações: rotas reais da API, nomes reais das tabelas, códigos HTTP
-> esperados e nova seção [5.1 de rastreabilidade](#51-rastreabilidade-com-os-testes-automatizados-out2026)
-> com os testes automatizados.
+> Revisão de outubro/2026 (equipe 2), por Luis Fernando, atualizada para a **v2.0 (N2)**. A versão
+> original da equipe anterior continua neste diretório (`.pdf`). Alterações: rotas reais da API, nomes
+> reais das tabelas, códigos HTTP esperados e a [seção 5.1 de rastreabilidade](#51-rastreabilidade-com-os-testes-automatizados-v20).
+> Os casos das funcionalidades da N2 (avaliação, extrato, segurança) estão em
+> [`casos-de-teste-n2.md`](casos-de-teste-n2.md).
 
 **Documentos de referência:**
 
 - Acordo de Manutenibilidade e Engenharia de Software (não incluído no repositório)
-- [Documento de Especificação de Requisitos e DoR](Documento%20de%20Especifica%C3%A7%C3%A3o%20de%20Requisitos%20e%20DoR.md)
-- [Documento de Handoff, seção 6.2 — Contrato da API](Vivlio%20-%20Handoff.md#62-contrato-da-api)
+- [Documento de Especificação de Requisitos e DoR](../requisitos/Documento%20de%20Especifica%C3%A7%C3%A3o%20de%20Requisitos%20e%20DoR.md)
+- [Documento de Handoff, seção 6.2 — Contrato dos endpoints novos](../handoff/README.md#62-contrato-dos-endpoints-novos)
 
 ## 1. Objetivo
 
@@ -45,7 +46,8 @@ Conforme definido no Acordo de Manutenibilidade (Seção 4):
 - **Foco primário:** regras de negócio no backend/domain, com destaque para a lógica de créditos (doação e resgate).
 - **Frequência:** antes de cada entrega oficial, será executado o roteiro completo cobrindo o fluxo principal e as regras de negócio críticas.
 - **Níveis de teste:** funcionais manuais/exploratórios (cadastro, doação, resgate); testes de API via Postman/Insomnia para validar regras server-side; testes de concorrência para a RN Crítica (RNF01).
-- **Testes automatizados de backend:** suíte JUnit + MockMvc com H2 em memória. Roda localmente com `docker compose exec backend ./mvnw -B -ntp test` (ou `./mvnw test` na pasta `backend/`, sem Docker) e automaticamente no CI a cada Pull Request (job `backend` do `.github/workflows/ci.yml`). A relação entre casos e testes está na seção 5.1. O frontend não possui testes automatizados (DT-04).
+- **Testes automatizados de backend:** suíte JUnit + MockMvc com H2 em memória. Roda localmente com `docker compose exec backend ./mvnw -B -ntp test` (ou `./mvnw test` na pasta `backend/`, sem Docker) e automaticamente no CI a cada Pull Request (job `backend` do `.github/workflows/ci.yml`). A relação entre casos e testes está na seção 5.1.
+- **Testes automatizados de frontend:** Vitest + Testing Library (`cd frontend && npm test`), também no job `frontend` do CI. Cobrem TC03, TC05, TC06, TC09, TC10 e TC19 do lado da tela.
 
 ### Definition of Done: validação do QA
 
@@ -56,8 +58,8 @@ Nenhuma tarefa é considerada concluída sem:
 
 ## 4. Ambiente de Testes
 
-- **Ferramenta de API:** Postman ou Insomnia, com a coleção dedicada às rotas do backend em `backend/postman/Vivlio.postman_collection.json` (`POST /api/auth/registrar`, `POST /api/auth/login`, `GET /api/usuarios/me`, `GET /api/livros`, `POST /api/livros`, `POST /api/resgates`).
-- **Pré-requisito:** API e banco no ar com `docker compose up`, conforme `Docs/devops/ambiente-local.md` (a API é real, não há mock).
+- **Ferramenta de API:** Postman ou Insomnia, com a coleção dedicada às rotas do backend em `backend/postman/Vivlio.postman_collection.json` (`POST /api/auth/registrar`, `POST /api/auth/login`, `GET /api/usuarios/me`, `GET /api/livros`, `POST /api/livros`, `GET /api/avaliacao/questionario`, `POST /api/resgates`, `GET /api/creditos/extrato`). Ela deve rodar contra um banco vazio: `npx newman run backend/postman/Vivlio.postman_collection.json`.
+- **Pré-requisito:** API e banco no ar com `docker compose up`, conforme [`docs/devops/ambiente-local.md`](../devops/ambiente-local.md) (a API é real, não há mock).
 - **Banco de dados:** PostgreSQL, validação direta das tabelas `usuarios`, `livros` e `transacoes_credito` quando necessário.
 - **Ponto de sincronização:** reunião 'Daniela + Devs', rodando as coleções do Postman contra a API para validar a RN Crítica.
 
@@ -76,7 +78,7 @@ Nenhuma tarefa é considerada concluída sem:
 
 | ID | Cenário | Pré-condição | Passos | Resultado Esperado | Prior. |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **TC05** | Doação com dados completos (cenário feliz) | Usuário logado | Preencher título, autor e gênero; confirmar doação | Livro salvo com status DISPONIVEL; saldo +1; mensagem: "Livro cadastrado! Você ganhou 1 crédito." (API: HTTP 201) | Alta |
+| **TC05** | Doação com dados completos (cenário feliz) | Usuário logado | Preencher título, autor, gênero e o questionário de avaliação; confirmar doação | Livro salvo com status DISPONIVEL; saldo +1; mensagem: "Livro cadastrado! Você ganhou 1 crédito." (API: HTTP 201) | Alta |
 | **TC06** | Doação com campo obrigatório faltando | Usuário logado | Enviar formulário sem título/autor/gênero | Sistema bloqueia a ação e destaca os campos em vermelho; nenhum crédito é gerado (API: HTTP 400) | Média |
 | **TC07** | Registro da transação de entrada | Usuário logado, doação concluída | Verificar tabela `transacoes_credito` após doação | Registro criado com tipo: ENTRADA, descricao: 'Doação de livro' | Alta |
 | **TC08** | Proporção estrita 1:1 | Usuário logado | Doar 3 livros em sequência | Saldo aumenta exatamente 3 (nunca mais, nunca menos) | Alta |
@@ -117,31 +119,31 @@ Nenhuma tarefa é considerada concluída sem:
 
 TC10, TC11 e TC14 validam a RN Crítica sob três ângulos diferentes (frontend, backend isolado, concorrência). Nenhum substitui o outro. Um bug de saldo negativo tipicamente só aparece no TC14, mesmo que TC10 e TC11 passem.
 
-### 5.1 Rastreabilidade com os testes automatizados (out/2026)
+### 5.1 Rastreabilidade com os testes automatizados (v2.0)
 
-Classes em `backend/src/test/java/br/com/vivlio/`; cada teste traz o ID do caso no `@DisplayName`. A coluna "Situação na interface" registra o que a execução manual encontra hoje nas telas; as divergências estão detalhadas no DT-06 do [Relatório de Débitos Técnicos](Vivlio%20-%20Debitos%20Tecnicos.md).
+Backend em `backend/src/test/java/br/com/vivlio/` (cada teste traz o ID do caso no `@DisplayName`); frontend em `frontend/src/**/*.test.jsx`. A coluna "Situação na interface" registra o resultado esperado na execução manual da v2.0. O histórico das divergências da N1 está no DT-06 do [Relatório de Débitos Técnicos](../debitos-tecnicos/README.md).
 
-| ID | Teste automatizado (backend) | Situação na interface |
-| :--- | :--- | :--- |
-| **TC01** | `auth/controller/AuthControllerTest` | Atende. |
-| **TC02** | `auth/controller/AuthControllerTest` | Atende. |
-| **TC03** | `auth/controller/AuthControllerTest` | Parcial: o navegador bloqueia campos vazios (atributo `required`), sem destaque em vermelho; erros da API mostram só a primeira mensagem. |
-| **TC04** | `auth/controller/AuthControllerTest` | Não se aplica (verificação no banco). |
-| **TC05** | `livro/controller/DoacaoControllerTest` | Diverge: a mensagem exibida é "'&lt;título&gt;' entrou no acervo. Seu saldo agora é de N." |
-| **TC06** | `livro/controller/DoacaoControllerTest` | Parcial: mesmo comportamento do TC03. |
-| **TC07** | `livro/controller/DoacaoControllerTest` | Não se aplica (verificação no banco). |
-| **TC08** | `livro/controller/DoacaoControllerTest` | Atende. |
-| **TC09** | `resgate/controller/ResgateControllerTest` | Diverge: o botão do card é "Resgatar" (sem página de detalhes nem modal) e a mensagem exibida é "Resgate concluído. O livro '&lt;título&gt;' é seu. Saldo atual: N." |
-| **TC10** | Sem automação (frontend sem testes, DT-04) | **Falha:** o botão continua habilitado com saldo 0; a mensagem esperada só aparece depois que a API responde 409. Como o caso é Crítico, bloqueia o critério de saída. |
-| **TC11** | `resgate/controller/ResgateControllerTest` | Não se aplica (chamada direta à API). |
-| **TC12** | `resgate/controller/ResgateControllerTest` | Não se aplica (verificação no banco). |
-| **TC13** | `resgate/controller/ResgateControllerTest` | Atende. |
-| **TC14** | `resgate/service/ResgateConcorrenteTest` | Não se aplica (concorrência). |
-| **TC15** | `livro/controller/LivroControllerTest` | Atende. |
-| **TC16** | `livro/controller/LivroControllerTest` (título, autor e gênero) | Atende. |
-| **TC17** | Sem automação (não há teste de desempenho) | Executar manualmente. |
-| **TC18** | `DoacaoControllerTest` e `ResgateControllerTest` | Não se aplica (chamada direta à API). |
-| **TC19** | `AuthControllerTest` cobre token inválido; token expirado não tem teste automatizado | Atende: em qualquer 401 o frontend descarta o token e redireciona para o login. |
+| ID | Backend | Frontend | Situação na interface |
+| :--- | :--- | :--- | :--- |
+| **TC01** | `AuthControllerTest` | `Cadastro.test.jsx` | Atende. |
+| **TC02** | `AuthControllerTest` | — | Atende. |
+| **TC03** | `AuthControllerTest` | `Cadastro.test.jsx` | Atende: todos os campos vazios em vermelho, com mensagem por campo (PR #15). |
+| **TC04** | `AuthControllerTest` | — | Não se aplica (verificação no banco). |
+| **TC05** | `DoacaoControllerTest` | `Doacao.test.jsx` | Atende: "Livro cadastrado! Você ganhou 1 crédito." + nota do estado (PR #15). |
+| **TC06** | `DoacaoControllerTest` | `Doacao.test.jsx` | Atende: campos e perguntas sem resposta em vermelho (PR #15). |
+| **TC07** | `DoacaoControllerTest` | — | Não se aplica (verificação no banco). |
+| **TC08** | `DoacaoControllerTest` | — | Atende. |
+| **TC09** | `ResgateControllerTest` | `Acervo.test.jsx` | Atende: modal de detalhes e confirmação; "Resgate confirmado! Combine a entrega na biblioteca." (PR #15). |
+| **TC10** | — | `Acervo.test.jsx` | Atende: botão desabilitado com saldo 0 e mensagem oficial, sem chamada à API (PR #15). |
+| **TC11** | `ResgateControllerTest` | — | Não se aplica (chamada direta à API). |
+| **TC12** | `ResgateControllerTest`, `ExtratoControllerTest` | — | Também visível no extrato do perfil. |
+| **TC13** | `ResgateControllerTest` | — | Atende. |
+| **TC14** | `ResgateConcorrenteTest`, `ExtratoControllerTest` | — | Não se aplica (concorrência). Saldo = entradas − saídas também sob concorrência. |
+| **TC15** | `LivroControllerTest` | — | Atende. |
+| **TC16** | `LivroControllerTest` | — | Atende. |
+| **TC17** | — | — | Executar manualmente (sem teste de desempenho; ver DT-11). |
+| **TC18** | `DoacaoControllerTest`, `ResgateControllerTest`, `ExtratoControllerTest` | `RotaProtegida.test.jsx` | Atende. |
+| **TC19** | `AuthControllerTest`, `JwtServiceTest` (token expirado) | `api.test.js`, `AuthProvider.test.jsx` | Atende: em qualquer 401 o frontend descarta o token e volta ao login. |
 
 ## 6. Registro e Resolução de Bugs
 
@@ -155,8 +157,9 @@ Conforme o Acordo de Manutenibilidade (Seção 4.2), todo bug identificado deve 
 
 ## 7. Critério de Saída (Exit Criteria)
 
-A versão N1 é considerada pronta para entrega quando:
+A versão é considerada pronta para entrega quando (N1 e N2):
 
 - 100% dos casos de prioridade Crítica (TC10, TC11, TC14, TC18) passarem.
 - Nenhum bug de severidade Alta ou Crítica estiver em aberto.
 - Os casos de prioridade Alta tiverem taxa de sucesso ≥ 90%.
+- **N2:** os casos Críticos de [`casos-de-teste-n2.md`](casos-de-teste-n2.md) (AV03, EX02, EX03) também passarem, e o CI estiver verde.
