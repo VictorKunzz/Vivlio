@@ -18,6 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ResgateService {
 
+    // DT-12: doar e resgatar o mesmo livro é neutro em créditos, mas tira o livro do acervo
+    // sem troca real e polui o histórico.
+    static final String MENSAGEM_PROPRIO_LIVRO = "Você não pode resgatar um livro que você mesmo doou.";
+
     private static final String DESCRICAO_RESGATE = "Resgate de livro";
 
     private final LivroRepository livroRepository;
@@ -34,6 +38,10 @@ public class ResgateService {
 
         if (livro.getStatus() != StatusLivro.DISPONIVEL) {
             throw new NegocioException(HttpStatus.CONFLICT, "Este livro não está mais disponível para resgate.");
+        }
+
+        if (livro.getDoador().getId().equals(usuario.getId())) {
+            throw new NegocioException(HttpStatus.CONFLICT, MENSAGEM_PROPRIO_LIVRO);
         }
 
         creditoService.debitar(usuario, DESCRICAO_RESGATE);
