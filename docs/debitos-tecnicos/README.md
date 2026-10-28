@@ -17,7 +17,7 @@ Estado na versão **v2.0**. O relatório original da N1, com os cinco débitos h
 | DT-09 | Livros doados antes da avaliação ficam sem nota | Baixo | 🔴 Aberto | issue #23 |
 | DT-10 | Gênero não é validado contra a lista fixa | Baixo | 🔴 Aberto | issue #24 |
 | DT-11 | Acervo sem paginação e busca sem índice | Médio | 🔴 Aberto | issue #25 |
-| DT-12 | Usuário pode resgatar o próprio livro doado | Baixo | 🔴 Aberto | issue #26 |
+| DT-12 | Usuário pode resgatar o próprio livro doado | Baixo | ✅ Resolvido | PR #30 · issue #26 |
 | DT-13 | CORS restrito a localhost | Médio | 🔴 Aberto | issue #27 |
 
 Os débitos DT-10 a DT-13 já constavam como "pontos de atenção" no handoff da N1 e foram promovidos a débito. DT-07 a DT-09 surgiram com a avaliação do livro (PR #13). As issues de DT-07 a DT-13 são as #21 a #27, com o rótulo `debito-tecnico`.
@@ -117,12 +117,12 @@ Esses três itens mudam a arquitetura de autenticação e devem ser feitos antes
 - **Consequência:** é o primeiro gargalo do RNF de listagem abaixo de 500 ms conforme o acervo crescer.
 - **Ação recomendada:** paginar a API e a tela, e criar o índice numa migração `V3`.
 
-### DT-12 — Usuário pode resgatar o próprio livro
+### DT-12 — Usuário pode resgatar o próprio livro ✅
 
 - **Impacto:** Baixo
 - **Onde:** `ResgateService`
-- **Problema:** nada impede o doador de resgatar o livro que ele mesmo doou. A operação é neutra em créditos, mas confunde o histórico.
-- **Ação recomendada:** a PO decidir. Se não for permitido, bloquear com 409 no `ResgateService` e esconder o botão no card do próprio doador.
+- **Problema:** nada impedia o doador de resgatar o livro que ele mesmo doou. A operação é neutra em créditos, mas tirava o livro do acervo sem troca real e confundia o histórico.
+- **O que foi feito (PR #30):** o `ResgateService` recusa com **409** ("Você não pode resgatar um livro que você mesmo doou."), o acervo passa a devolver `doadorId`, e o card do próprio doador mostra "Você doou este livro" em vez do botão. Encontrado no teste manual da QA antes da entrega da N2.
 
 ### DT-13 — CORS restrito a localhost
 
@@ -141,4 +141,4 @@ Esses três itens mudam a arquitetura de autenticação e devem ser feitos antes
 3. **DT-03** (o que falta): obrigatório antes de qualquer exposição pública.
 4. **DT-13** (CORS): obrigatório para publicar o frontend.
 5. **DT-11** (paginação): antes do acervo crescer.
-6. **DT-10**, **DT-12** e **DT-09**: ajustes pequenos, que podem acompanhar outras entregas.
+6. **DT-10** e **DT-09**: ajustes pequenos, que podem acompanhar outras entregas.

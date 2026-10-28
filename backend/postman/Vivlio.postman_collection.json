@@ -20,6 +20,10 @@
     {
       "key": "livroDisponivelId",
       "value": ""
+    },
+    {
+      "key": "livroSegundoBId",
+      "value": ""
     }
   ],
   "item": [
@@ -627,51 +631,7 @@
       }
     },
     {
-      "name": "TC09 - Resgate com saldo suficiente",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('status 200', () => pm.response.to.have.status(200));",
-              "const body = pm.response.json();",
-              "pm.test('livro RESGATADO', () => pm.expect(body.livro.status).to.eql('RESGATADO'));",
-              "pm.test('saldo debitado', () => pm.expect(body.saldoCreditos).to.be.at.least(0));"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer {{token}}"
-          }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/api/resgates",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "resgates"
-          ]
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"livroId\": 1\n}"
-        }
-      }
-    },
-    {
-      "name": "Preparacao TC11 - segundo usuario se cadastra",
+      "name": "Preparacao - segundo usuario se cadastra",
       "event": [
         {
           "listen": "test",
@@ -710,7 +670,7 @@
       }
     },
     {
-      "name": "Preparacao TC11 - segundo usuario doa um livro disponivel",
+      "name": "Preparacao - segundo usuario doa o livro A",
       "event": [
         {
           "listen": "test",
@@ -752,6 +712,134 @@
       }
     },
     {
+      "name": "Preparacao - segundo usuario doa o livro B",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set('livroSegundoBId', pm.response.json().livro.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenSegundo}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/livros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "livros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Capitaes da Areia\",\n  \"autor\": \"Jorge Amado\",\n  \"genero\": \"Romance\",\n  \"avaliacao\": {\n    \"capa\": \"SEM_DESGASTE\",\n    \"lombada\": \"RETA\",\n    \"paginas\": \"SEM_DOBRAS\",\n    \"marcacoes\": \"NENHUMA\",\n    \"manchas\": \"NENHUMA\",\n    \"odor\": \"NENHUM\",\n    \"eliminatorios\": [],\n    \"didaticoComExerciciosRespondidos\": false,\n    \"sobrecapaAusente\": false\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "DT-12 - Doador nao resgata o proprio livro",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 409', () => pm.response.to.have.status(409));",
+              "pm.test('mensagem do DT-12', () => pm.expect(pm.response.json().mensagem).to.eql('Você não pode resgatar um livro que você mesmo doou.'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/resgates",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "resgates"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"livroId\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "TC09 - Resgate com saldo suficiente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('livro RESGATADO', () => pm.expect(body.livro.status).to.eql('RESGATADO'));",
+              "pm.test('saldo debitado', () => pm.expect(body.saldoCreditos).to.be.at.least(0));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/resgates",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "resgates"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"livroId\": {{livroDisponivelId}}\n}"
+        }
+      }
+    },
+    {
       "name": "TC11 - RN CRITICA: resgate com saldo 0 (bypass do frontend)",
       "event": [
         {
@@ -789,7 +877,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"livroId\": {{livroDisponivelId}}\n}"
+          "raw": "{\n  \"livroId\": {{livroSegundoBId}}\n}"
         }
       }
     },
@@ -830,7 +918,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"livroId\": 1\n}"
+          "raw": "{\n  \"livroId\": {{livroDisponivelId}}\n}"
         }
       }
     },

@@ -44,6 +44,9 @@ async function preencherTudo() {
   await userEvent.type(screen.getByLabelText(/^Título/), 'Dom Casmurro');
   await userEvent.type(screen.getByLabelText(/^Autor/), 'Machado de Assis');
   await userEvent.selectOptions(screen.getByLabelText(/^Gênero/), 'Romance');
+  await userEvent.click(
+    screen.getByLabelText('Não tem nenhum destes problemas.')
+  );
   for (const descricao of RESPOSTAS) {
     await userEvent.click(screen.getByLabelText(descricao));
   }
@@ -73,9 +76,49 @@ describe('Doação', () => {
     }
     expect(screen.getAllByText('Escolha uma opção.')).toHaveLength(6);
     expect(
+      screen.getByText(
+        'Marque os problemas do livro ou confirme que ele não tem nenhum.'
+      )
+    ).toBeInTheDocument();
+    expect(
       screen.getByText('Corrija os campos destacados em vermelho.')
     ).toBeInTheDocument();
     expect(api.post).not.toHaveBeenCalled();
+  });
+
+  it('exige confirmar que não há problemas, mesmo com o resto preenchido', async () => {
+    await abrirFormulario();
+
+    await preencherTudo();
+    await userEvent.click(
+      screen.getByLabelText('Não tem nenhum destes problemas.')
+    );
+    await enviar();
+
+    expect(
+      screen.getByText(
+        'Marque os problemas do livro ou confirme que ele não tem nenhum.'
+      )
+    ).toBeInTheDocument();
+    expect(api.post).not.toHaveBeenCalled();
+  });
+
+  it('"nenhum problema" e os eliminatórios se excluem', async () => {
+    await abrirFormulario();
+    const nenhum = screen.getByLabelText('Não tem nenhum destes problemas.');
+    const mofo = screen.getByLabelText('Tem mofo.');
+
+    await userEvent.click(nenhum);
+    expect(nenhum).toBeChecked();
+
+    await userEvent.click(mofo);
+    expect(mofo).toBeChecked();
+    expect(nenhum).not.toBeChecked();
+
+    await userEvent.click(nenhum);
+    expect(nenhum).toBeChecked();
+    expect(mofo).not.toBeChecked();
+    expect(screen.getByText('Como está a capa?')).toBeInTheDocument();
   });
 
   it('TC05: doação completa mostra a mensagem oficial e envia o questionário', async () => {

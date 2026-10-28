@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { mensagemDeErro } from '../services/erros';
 import { useAuth } from '../hooks/useAuth';
+import Estrelas from '../components/Estrelas';
 
 const FORMATO_DATA = new Intl.DateTimeFormat('pt-BR', {
   dateStyle: 'short',
@@ -13,6 +14,8 @@ function Perfil() {
   const { usuario } = useAuth();
   const [extrato, setExtrato] = useState(null);
   const [erro, setErro] = useState('');
+  const [doacoes, setDoacoes] = useState(null);
+  const [erroDoacoes, setErroDoacoes] = useState('');
 
   useEffect(() => {
     let ativo = true;
@@ -24,6 +27,15 @@ function Perfil() {
       })
       .catch((falha) => {
         if (ativo) setErro(mensagemDeErro(falha));
+      });
+
+    api
+      .get('/api/usuarios/me/doacoes')
+      .then((resposta) => {
+        if (ativo) setDoacoes(resposta.data);
+      })
+      .catch((falha) => {
+        if (ativo) setErroDoacoes(mensagemDeErro(falha));
       });
 
     return () => {
@@ -61,6 +73,56 @@ function Perfil() {
           {usuario.saldoCreditos === 1 ? 'livro' : 'livros'} no{' '}
           <Link to="/acervo">acervo</Link>.
         </p>
+      )}
+
+      <h2 className="titulo-secao">Livros em doação</h2>
+
+      {erroDoacoes && <p className="erro">{erroDoacoes}</p>}
+      {!doacoes && !erroDoacoes && (
+        <p className="vazio">Carregando livros em doação...</p>
+      )}
+
+      {doacoes && doacoes.length === 0 && (
+        <p className="vazio">
+          Nenhum livro seu aguardando resgate.{' '}
+          <Link to="/doar">Doar um livro</Link>
+        </p>
+      )}
+
+      {doacoes && doacoes.length > 0 && (
+        <>
+          <p className="dica">
+            {doacoes.length}{' '}
+            {doacoes.length === 1
+              ? 'livro seu está no acervo, aguardando'
+              : 'livros seus estão no acervo, aguardando'}{' '}
+            outro leitor.
+          </p>
+          <table className="extrato">
+            <thead>
+              <tr>
+                <th scope="col">Título</th>
+                <th scope="col">Autor</th>
+                <th scope="col">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {doacoes.map((livro) => (
+                <tr key={livro.id}>
+                  <td>{livro.titulo}</td>
+                  <td>{livro.autor}</td>
+                  <td>
+                    {livro.nota == null ? (
+                      'Sem avaliação'
+                    ) : (
+                      <Estrelas nota={livro.nota} />
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
 
       <h2 className="titulo-secao">Extrato de créditos</h2>

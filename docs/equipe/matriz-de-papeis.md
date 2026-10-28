@@ -80,7 +80,7 @@ Os PRs #13 e #15 a #20 foram desenvolvidos com apoio do Claude Code (assistente 
 | Pendência | Responsável |
 |---|---|
 | Aprovar os textos do DT-06 e registrar a ficha de avaliação como regra do RF06 (DT-07, #21) | PO (Gustavo) |
-| Decidir DT-09 (#23, livros sem nota) e DT-12 (#26, resgate do próprio livro) | PO (Gustavo) |
+| Decidir DT-09 (#23, livros sem nota) e confirmar o bloqueio do resgate do próprio livro (DT-12, #26) | PO (Gustavo) |
 | Executar o roteiro manual da N2 e registrar o resultado | QA (João) |
 | Revisar e fazer merge do PR #20 (#15 a #19 já entraram) | Devs |
 | PR `develop → main`, tag e release `v2.0.0` | DevOps (Victor) |

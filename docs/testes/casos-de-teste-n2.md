@@ -23,6 +23,7 @@ Regra: o doador responde 6 critérios (capa, lombada, páginas, marcações, man
 | AV08 | Opção inexistente (API) | `"capa": "CINCO_ESTRELAS"` | **400** com mensagem amigável, nada salvo | Baixa | B |
 | AV09 | Notas não são expostas | `GET /api/avaliacao/questionario` | 6 critérios e 6 eliminatórios, nenhuma opção com campo `nota` | Média | B, P |
 | AV10 | Estrelas no acervo | Abrir o Acervo depois de AV01 | Card com 3 de 5 estrelas | Média | — |
+| AV11 | Confirmação de "nenhum problema" | Preencher tudo sem marcar problema nem "Não tem nenhum destes problemas" | Pergunta de problemas destacada em vermelho; envio bloqueado. A opção "nenhum" e os problemas se desmarcam entre si | Média | F |
 
 ## Extrato de créditos (DT-05)
 
@@ -33,6 +34,13 @@ Regra: o doador responde 6 critérios (capa, lombada, páginas, marcações, man
 | EX03 | Consistência sob concorrência | 2 resgates simultâneos com saldo 1 | 1 resgate conclui; saldo 0 = 1 entrada − 1 saída | Crítica | B |
 | EX04 | Extrato na tela | Abrir **Meu perfil** | Tabela com data no horário local, descrição e +1/−1; resumo "entradas − saídas = saldo" | Média | — |
 
+## Resgate do próprio livro (DT-12)
+
+| ID | Cenário | Passos | Resultado esperado | Prior. | Auto. |
+|---|---|---|---|---|---|
+| RS01 | Doador tenta resgatar o próprio livro (API) | `POST /api/resgates` com um livro que o próprio usuário doou | **409** "Você não pode resgatar um livro que você mesmo doou."; saldo e livro inalterados | Alta | B, P |
+| RS02 | Card do próprio livro | Abrir o Acervo logado como quem doou um dos livros | No lugar do botão: "Você doou este livro" | Média | F |
+
 ## Segurança (DT-03)
 
 | ID | Cenário | Passos | Resultado esperado | Prior. | Auto. |
@@ -40,6 +48,14 @@ Regra: o doador responde 6 critérios (capa, lombada, páginas, marcações, man
 | SEC01 | Backend sem segredo | Iniciar sem `JWT_SECRET` | Não inicializa; log: `JWT_SECRET não definido...` | Alta | B |
 | SEC02 | Segredo fraco | `JWT_SECRET` com menos de 32 caracteres | Não inicializa; log explica o mínimo | Alta | B |
 | SEC03 | Token expirado | Usar token com mais de 2 horas | **401**; o frontend apaga o token e volta ao login (TC19) | Média | B, F |
+
+## Livros em doação no perfil
+
+| ID | Cenário | Passos | Resultado esperado | Prior. | Auto. |
+|---|---|---|---|---|---|
+| PF01 | Exige login | `GET /api/usuarios/me/doacoes` sem token | **401** | Alta | B |
+| PF02 | Só os livros do usuário ainda disponíveis | Doar 2 livros, ter 1 doado já resgatado e outro usuário com 1 livro | A lista traz só os 2 disponíveis do usuário, do mais recente ao mais antigo | Alta | B |
+| PF03 | Seção no perfil | Abrir **Meu perfil** | Tabela "Livros em doação" com título, autor e estrelas; sem livros: aviso com link para doar | Média | F |
 
 ## Casos da N1 com resultado esperado atualizado (DT-06)
 
