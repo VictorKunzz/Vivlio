@@ -33,6 +33,13 @@ Regra: o doador responde 6 critérios (capa, lombada, páginas, marcações, man
 | EX03 | Consistência sob concorrência | 2 resgates simultâneos com saldo 1 | 1 resgate conclui; saldo 0 = 1 entrada − 1 saída | Crítica | B |
 | EX04 | Extrato na tela | Abrir **Meu perfil** | Tabela com data no horário local, descrição e +1/−1; resumo "entradas − saídas = saldo" | Média | — |
 
+## Resgate do próprio livro (DT-12)
+
+| ID | Cenário | Passos | Resultado esperado | Prior. | Auto. |
+|---|---|---|---|---|---|
+| RS01 | Doador tenta resgatar o próprio livro (API) | `POST /api/resgates` com um livro que o próprio usuário doou | **409** "Você não pode resgatar um livro que você mesmo doou."; saldo e livro inalterados | Alta | B, P |
+| RS02 | Card do próprio livro | Abrir o Acervo logado como quem doou um dos livros | No lugar do botão: "Você doou este livro" | Média | F |
+
 ## Segurança (DT-03)
 
 | ID | Cenário | Passos | Resultado esperado | Prior. | Auto. |
