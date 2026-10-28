@@ -23,6 +23,7 @@ Regra: o doador responde 6 critérios (capa, lombada, páginas, marcações, man
 | AV08 | Opção inexistente (API) | `"capa": "CINCO_ESTRELAS"` | **400** com mensagem amigável, nada salvo | Baixa | B |
 | AV09 | Notas não são expostas | `GET /api/avaliacao/questionario` | 6 critérios e 6 eliminatórios, nenhuma opção com campo `nota` | Média | B, P |
 | AV10 | Estrelas no acervo | Abrir o Acervo depois de AV01 | Card com 3 de 5 estrelas | Média | — |
+| AV11 | Confirmação de "nenhum problema" | Preencher tudo sem marcar problema nem "Não tem nenhum destes problemas" | Pergunta de problemas destacada em vermelho; envio bloqueado. A opção "nenhum" e os problemas se desmarcam entre si | Média | F |
 
 ## Extrato de créditos (DT-05)
 
